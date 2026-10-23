@@ -60,14 +60,28 @@ Never use the test split.
 
 ---
 
-## Prompt 4: final evaluation (once, at the very end)
+## Prompt 4: final evaluation, Release 1 (once, at the end of Sprint 2)
+
+Run it only when both models are final and nothing will change.
 
 ```
 Read AGENTS.md first and follow it exactly.
 
 Write scripts/final_eval.py and run it once on the chosen models:
-1. Detection metrics on test.
-2. Severity on test using the human boxes, with the baseline next to it.
-3. Full pipeline on test: detection -> khota_ml.crop.crop_box -> severity, and severity macro_f1 on the detected boxes that match a human box (IoU >= 0.5).
+1. Detection metrics on test: mAP50, mAP50-95, precision, recall, per class and overall.
+2. Severity on test using the human boxes: accuracy, macro_f1, F1 per class, confusion matrix, with the majority baseline next to it.
+Do not build the full pipeline yet; that is Release 2.
 Save every table and confusion matrix in reports/final/.
+```
+
+---
+
+## Prompt 5: full pipeline, Release 2 (Sprint 3, not now)
+
+```
+Read AGENTS.md first and follow it exactly.
+
+Add the full pipeline to scripts/final_eval.py: detection -> khota_ml.crop.crop_box -> severity.
+Report severity macro_f1 on the detected boxes that match a human box (IoU >= 0.5), next to the Release 1 results.
+Save the results in reports/final/pipeline/.
 ```
