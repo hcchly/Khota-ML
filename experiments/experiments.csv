@@ -1,1 +1,2 @@
 run_id,date,owner,model,change_from_previous,key_settings,val_main_metric,val_other_metrics,notes
+severity_majority_baseline,2026-10-28,Haifa,severity_baseline,Initial majority-class baseline,train majority=medium; seed=42; val boxes=93,0.182292,"accuracy=0.376344; f1_per_class={'low': 0.0, 'medium': 0.546875, 'high': 0.0}",Predicted the train majority class for every val defect box; test data not used.
