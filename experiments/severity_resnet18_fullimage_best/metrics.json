@@ -1,0 +1,118 @@
+{
+  "overall": {
+    "accuracy": 0.5806451612903226,
+    "macro_f1": 0.5137362637362637,
+    "f1_per_class": {
+      "low": 0.6923076923076923,
+      "medium": 0.4642857142857143,
+      "high": 0.38461538461538464
+    },
+    "confusion_matrix": [
+      [
+        36,
+        5,
+        2
+      ],
+      [
+        18,
+        13,
+        4
+      ],
+      [
+        7,
+        3,
+        5
+      ]
+    ],
+    "class_names": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "by_defect": {
+    "curb_ramp_issue": {
+      "accuracy": 0.6296296296296297,
+      "macro_f1": 0.492992992992993,
+      "f1_per_class": {
+        "low": 0.7567567567567568,
+        "medium": 0.2222222222222222,
+        "high": 0.5
+      },
+      "confusion_matrix": [
+        [
+          14,
+          5,
+          2
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          2
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "surface_damage": {
+      "accuracy": 0.5606060606060606,
+      "macro_f1": 0.5002293497053738,
+      "f1_per_class": {
+        "low": 0.6567164179104478,
+        "medium": 0.5106382978723404,
+        "high": 0.3333333333333333
+      },
+      "confusion_matrix": [
+        [
+          22,
+          0,
+          0
+        ],
+        [
+          17,
+          12,
+          4
+        ],
+        [
+          6,
+          2,
+          3
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  },
+  "baseline": {
+    "majority_class": "medium",
+    "accuracy": 0.3763440860215054,
+    "macro_f1": 0.18229166666666666,
+    "by_defect": {
+      "curb_ramp_issue": {
+        "accuracy": 0.07407407407407407,
+        "macro_f1": 0.04597701149425287
+      },
+      "surface_damage": {
+        "accuracy": 0.5,
+        "macro_f1": 0.2222222222222222
+      }
+    }
+  },
+  "run_id": "severity_resnet18_fullimage_best",
+  "input_mode": "full_image",
+  "augment": false,
+  "best_epoch": 5,
+  "checkpoint": "best_model.pt",
+  "device": "cpu"
+}

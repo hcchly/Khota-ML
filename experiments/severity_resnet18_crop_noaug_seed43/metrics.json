@@ -1,0 +1,119 @@
+{
+  "overall": {
+    "accuracy": 0.5913978494623656,
+    "macro_f1": 0.5769685652038593,
+    "f1_per_class": {
+      "low": 0.6888888888888889,
+      "medium": 0.47058823529411764,
+      "high": 0.5714285714285714
+    },
+    "confusion_matrix": [
+      [
+        31,
+        11,
+        1
+      ],
+      [
+        15,
+        16,
+        4
+      ],
+      [
+        1,
+        6,
+        8
+      ]
+    ],
+    "class_names": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "by_defect": {
+    "curb_ramp_issue": {
+      "accuracy": 0.5925925925925926,
+      "macro_f1": 0.26666666666666666,
+      "f1_per_class": {
+        "low": 0.8,
+        "medium": 0.0,
+        "high": 0.0
+      },
+      "confusion_matrix": [
+        [
+          16,
+          4,
+          1
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          3,
+          0
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "surface_damage": {
+      "accuracy": 0.5909090909090909,
+      "macro_f1": 0.6126750184229919,
+      "f1_per_class": {
+        "low": 0.6,
+        "medium": 0.5423728813559322,
+        "high": 0.6956521739130435
+      },
+      "confusion_matrix": [
+        [
+          15,
+          7,
+          0
+        ],
+        [
+          13,
+          16,
+          4
+        ],
+        [
+          0,
+          3,
+          8
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  },
+  "baseline": {
+    "majority_class": "medium",
+    "accuracy": 0.3763440860215054,
+    "macro_f1": 0.18229166666666666,
+    "by_defect": {
+      "curb_ramp_issue": {
+        "accuracy": 0.07407407407407407,
+        "macro_f1": 0.04597701149425287
+      },
+      "surface_damage": {
+        "accuracy": 0.5,
+        "macro_f1": 0.2222222222222222
+      }
+    }
+  },
+  "run_id": "severity_resnet18_crop_noaug_seed43",
+  "input_mode": "crop",
+  "augment": false,
+  "best_epoch": 8,
+  "device": "cpu",
+  "checkpoint": "best_model.pt",
+  "architecture": "resnet18"
+}

@@ -1,0 +1,7 @@
+defect_class,size_group,count,error_rate,low_to_low,low_to_medium,medium_to_low,medium_to_medium
+curb_ramp_issue,small,9,0.4444444444444444,5,3,1,0
+curb_ramp_issue,medium,9,0.2222222222222222,7,1,0,0
+curb_ramp_issue,large,9,0.6666666666666666,3,0,1,0
+surface_damage,small,22,0.5,7,1,7,4
+surface_damage,medium,22,0.5,5,4,6,5
+surface_damage,large,22,0.36363636363636365,4,1,3,4

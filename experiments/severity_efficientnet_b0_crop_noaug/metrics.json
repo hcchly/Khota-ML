@@ -1,0 +1,119 @@
+{
+  "overall": {
+    "accuracy": 0.5053763440860215,
+    "macro_f1": 0.5025467898602227,
+    "f1_per_class": {
+      "low": 0.5671641791044776,
+      "medium": 0.47619047619047616,
+      "high": 0.4642857142857143
+    },
+    "confusion_matrix": [
+      [
+        19,
+        12,
+        12
+      ],
+      [
+        4,
+        15,
+        16
+      ],
+      [
+        1,
+        1,
+        13
+      ]
+    ],
+    "class_names": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "by_defect": {
+    "curb_ramp_issue": {
+      "accuracy": 0.4074074074074074,
+      "macro_f1": 0.37542087542087543,
+      "f1_per_class": {
+        "low": 0.4444444444444444,
+        "medium": 0.18181818181818182,
+        "high": 0.5
+      },
+      "confusion_matrix": [
+        [
+          6,
+          8,
+          7
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          4
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "surface_damage": {
+      "accuracy": 0.5454545454545454,
+      "macro_f1": 0.5461538461538461,
+      "f1_per_class": {
+        "low": 0.65,
+        "medium": 0.5384615384615384,
+        "high": 0.45
+      },
+      "confusion_matrix": [
+        [
+          13,
+          4,
+          5
+        ],
+        [
+          4,
+          14,
+          15
+        ],
+        [
+          1,
+          1,
+          9
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  },
+  "baseline": {
+    "majority_class": "medium",
+    "accuracy": 0.3763440860215054,
+    "macro_f1": 0.18229166666666666,
+    "by_defect": {
+      "curb_ramp_issue": {
+        "accuracy": 0.07407407407407407,
+        "macro_f1": 0.04597701149425287
+      },
+      "surface_damage": {
+        "accuracy": 0.5,
+        "macro_f1": 0.2222222222222222
+      }
+    }
+  },
+  "run_id": "severity_efficientnet_b0_crop_noaug",
+  "input_mode": "crop",
+  "augment": false,
+  "best_epoch": 2,
+  "device": "mps",
+  "checkpoint": "best_model.pt",
+  "architecture": "efficientnet_b0"
+}

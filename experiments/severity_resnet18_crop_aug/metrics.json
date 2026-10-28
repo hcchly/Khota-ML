@@ -1,0 +1,118 @@
+{
+  "overall": {
+    "accuracy": 0.5376344086021505,
+    "macro_f1": 0.5618181818181819,
+    "f1_per_class": {
+      "low": 0.5454545454545454,
+      "medium": 0.5,
+      "high": 0.64
+    },
+    "confusion_matrix": [
+      [
+        21,
+        22,
+        0
+      ],
+      [
+        12,
+        21,
+        2
+      ],
+      [
+        1,
+        6,
+        8
+      ]
+    ],
+    "class_names": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "by_defect": {
+    "curb_ramp_issue": {
+      "accuracy": 0.48148148148148145,
+      "macro_f1": 0.3934640522875817,
+      "f1_per_class": {
+        "low": 0.6470588235294118,
+        "medium": 0.13333333333333333,
+        "high": 0.4
+      },
+      "confusion_matrix": [
+        [
+          11,
+          10,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          2,
+          1
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "surface_damage": {
+      "accuracy": 0.5606060606060606,
+      "macro_f1": 0.5816088079991012,
+      "f1_per_class": {
+        "low": 0.46511627906976744,
+        "medium": 0.5797101449275363,
+        "high": 0.7
+      },
+      "confusion_matrix": [
+        [
+          10,
+          12,
+          0
+        ],
+        [
+          11,
+          20,
+          2
+        ],
+        [
+          0,
+          4,
+          7
+        ]
+      ],
+      "class_names": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  },
+  "baseline": {
+    "majority_class": "medium",
+    "accuracy": 0.3763440860215054,
+    "macro_f1": 0.18229166666666666,
+    "by_defect": {
+      "curb_ramp_issue": {
+        "accuracy": 0.07407407407407407,
+        "macro_f1": 0.04597701149425287
+      },
+      "surface_damage": {
+        "accuracy": 0.5,
+        "macro_f1": 0.2222222222222222
+      }
+    }
+  },
+  "run_id": "severity_resnet18_crop_aug",
+  "input_mode": "crop",
+  "augment": true,
+  "best_epoch": 3,
+  "checkpoint": "best_model.pt",
+  "device": "cpu"
+}
