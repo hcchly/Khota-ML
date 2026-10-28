@@ -1,14 +1,12 @@
 # Large files live in the shared Google Drive, not in git
-data/images/*
-!data/images/.gitkeep
 raw/*
 !raw/.gitkeep
+datasets/
 *.pt
 *.pth
 *.onnx
 runs/
 experiments/*/weights/
-datasets/
 
 # Python
 __pycache__/
@@ -16,3 +14,4 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 .DS_Store
+~$*.xlsx
