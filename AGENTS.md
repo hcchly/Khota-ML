@@ -150,6 +150,9 @@ Pipeline (Release 2): see prompt 6.
   (store it with the checkpoint); default 0.5.
 - Severity augmentation on **train only**, and only: horizontal flip, rotation within ±10°, brightness/contrast
   within ±20%. Never strong zoom or crop, blur, or strong colour changes (they change how severe a defect looks).
+- Approved exception (10 Nov 2026): mild **box jitter** on train only — box centre ±10% of box size, width/height
+  ×0.85–1.15, applied before `crop_box` — to simulate detector box error. Jittered val is report-only, never used
+  for selection.
 - Never oversample or augment val or test.
 
 ## 9. Experiment log

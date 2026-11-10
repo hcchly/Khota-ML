@@ -1,0 +1,70 @@
+{
+  "run_id": "sev2_G_resnet50_aug_sampler_jitter_seed44",
+  "spec": {
+    "name": "G",
+    "architecture": "resnet50",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run G: sev2_E_resnet18_aug_sampler_jitter with ResNet-50 instead of ResNet-18",
+    "jitter": true
+  },
+  "seed": 44,
+  "best_epoch": 5,
+  "epochs_run": 10,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.7951652985917614,
+    "recall_high": 0.7619047619047619,
+    "precision_high": 0.5714285714285714,
+    "f1_per_class": {
+      "low_medium": 0.9372693726937269,
+      "high": 0.6530612244897959
+    },
+    "accuracy": 0.89375,
+    "confusion_matrix": [
+      [
+        127,
+        12
+      ],
+      [
+        5,
+        16
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.7375,
+      "surface_damage": 0.806136680613668
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false,
+  "val_jitter": {
+    "threshold": 0.5,
+    "macro_f1": 0.7331732372756987,
+    "recall_high": 0.7619047619047619,
+    "precision_high": 0.4444444444444444,
+    "f1_per_class": {
+      "low_medium": 0.9049429657794676,
+      "high": 0.5614035087719298
+    },
+    "accuracy": 0.84375,
+    "confusion_matrix": [
+      [
+        119,
+        20
+      ],
+      [
+        5,
+        16
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.65,
+      "surface_damage": 0.7481163567000477
+    }
+  }
+}

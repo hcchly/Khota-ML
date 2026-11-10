@@ -40,5 +40,30 @@
     "macro_f1": 0.465,
     "accuracy": 0.869
   },
-  "test_used": false
+  "test_used": false,
+  "val_jitter": {
+    "threshold": 0.5,
+    "macro_f1": 0.7901914503015999,
+    "recall_high": 0.6190476190476191,
+    "precision_high": 0.65,
+    "f1_per_class": {
+      "low_medium": 0.946236559139785,
+      "high": 0.6341463414634146
+    },
+    "accuracy": 0.90625,
+    "confusion_matrix": [
+      [
+        132,
+        7
+      ],
+      [
+        8,
+        13
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.7764996907854051
+    }
+  }
 }

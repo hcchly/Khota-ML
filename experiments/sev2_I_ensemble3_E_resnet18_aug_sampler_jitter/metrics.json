@@ -1,0 +1,74 @@
+{
+  "run_id": "sev2_I_ensemble3_E_resnet18_aug_sampler_jitter",
+  "spec": {
+    "name": "I",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run E: sev2_C_resnet18_aug_sampler + box jitter on train (centre \u00b110%, w/h x0.85-1.15; approved exception)",
+    "jitter": true
+  },
+  "seed": "42+43+44",
+  "best_epoch": "-",
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.8013561264444657,
+    "recall_high": 0.5714285714285714,
+    "precision_high": 0.75,
+    "f1_per_class": {
+      "low_medium": 0.9540636042402827,
+      "high": 0.6486486486486487
+    },
+    "accuracy": 0.91875,
+    "confusion_matrix": [
+      [
+        135,
+        4
+      ],
+      [
+        9,
+        12
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.7882564741725523
+    }
+  },
+  "val_jitter": {
+    "threshold": 0.5,
+    "macro_f1": 0.8013561264444657,
+    "recall_high": 0.5714285714285714,
+    "precision_high": 0.75,
+    "f1_per_class": {
+      "low_medium": 0.9540636042402827,
+      "high": 0.6486486486486487
+    },
+    "accuracy": 0.91875,
+    "confusion_matrix": [
+      [
+        135,
+        4
+      ],
+      [
+        9,
+        12
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.7882564741725523
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "members": [
+    "sev2_E_resnet18_aug_sampler_jitter",
+    "sev2_E_resnet18_aug_sampler_jitter_seed43",
+    "sev2_E_resnet18_aug_sampler_jitter_seed44"
+  ],
+  "test_used": false
+}

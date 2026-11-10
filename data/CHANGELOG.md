@@ -19,3 +19,10 @@
   batch 3 v4. Editing RYD-0591 gave it a new Roboflow filename, so `Image_Index` row RYD-0591 (cells C559, D559)
   changed from `RYD-0591_jpg.rf.ed2298735ee2892d5223ad5d7ed2e579.jpg/.txt` to
   `RYD-0591_jpg.rf.8967894238be4157a8e8ed00bd529034.jpg/.txt`. Filename only; no other cell changed.
+
+## Rule change — 10 Nov 2026 (no label change)
+
+- AGENTS.md section 8: approved exception for the severity model — mild box jitter on train only (box centre
+  ±10% of box size, width/height ×0.85–1.15, before `crop_box`) to simulate detector box error. Strong zoom/crop
+  is still not allowed. A jittered copy of val (fixed seed) is used only as a report column, never for selection.
+  Labels, `annotations.csv` and the split are unchanged.

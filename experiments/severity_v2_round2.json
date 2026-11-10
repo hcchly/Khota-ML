@@ -1,0 +1,541 @@
+{
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "groups": [
+    {
+      "run_id": "sev2_C_resnet18_aug_sampler",
+      "spec": {
+        "name": "C",
+        "architecture": "resnet18",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run C: sev2_B_resnet18_aug_classweights with weighted random sampler instead of class weights"
+      },
+      "kind": "seeds",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.808000672943972,
+          "std": 0.015368809165154936,
+          "per_seed": [
+            0.8122,
+            0.791,
+            0.8208
+          ]
+        },
+        "recall_high": {
+          "mean": 0.5873015873015873,
+          "std": 0.027492869961410784,
+          "per_seed": [
+            0.5714,
+            0.5714,
+            0.619
+          ]
+        },
+        "precision_high": {
+          "mean": 0.7568627450980392,
+          "std": 0.0475464927567927,
+          "per_seed": [
+            0.8,
+            0.7059,
+            0.7647
+          ]
+        },
+        "accuracy": {
+          "mean": 0.9208333333333334,
+          "std": 0.007216878364870361,
+          "per_seed": [
+            0.925,
+            0.9125,
+            0.925
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.7840022622549411,
+          "std": 0.06282686716452167,
+          "per_seed": [
+            0.8435,
+            0.7183,
+            0.7902
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5555555555555556,
+          "std": 0.10997147984564302,
+          "per_seed": [
+            0.619,
+            0.4286,
+            0.619
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.8455882352941176
+        },
+        "macro_f1_surface": {
+          "mean": 0.7968023553507425
+        }
+      },
+      "members": [
+        "sev2_C_resnet18_aug_sampler",
+        "sev2_C_resnet18_aug_sampler_seed43",
+        "sev2_C_resnet18_aug_sampler_seed44"
+      ]
+    },
+    {
+      "run_id": "sev2_E_resnet18_aug_sampler_jitter",
+      "spec": {
+        "name": "E",
+        "architecture": "resnet18",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run E: sev2_C_resnet18_aug_sampler + box jitter on train (centre \u00b110%, w/h x0.85-1.15; approved exception)",
+        "jitter": true
+      },
+      "kind": "seeds",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.8072599725248715,
+          "std": 0.024167462972184663,
+          "per_seed": [
+            0.8122,
+            0.8286,
+            0.781
+          ]
+        },
+        "recall_high": {
+          "mean": 0.6031746031746031,
+          "std": 0.05498573992282149,
+          "per_seed": [
+            0.5714,
+            0.6667,
+            0.5714
+          ]
+        },
+        "precision_high": {
+          "mean": 0.7345029239766081,
+          "std": 0.06669743826612053,
+          "per_seed": [
+            0.8,
+            0.7368,
+            0.6667
+          ]
+        },
+        "accuracy": {
+          "mean": 0.9187500000000001,
+          "std": 0.01082531754730551,
+          "per_seed": [
+            0.925,
+            0.925,
+            0.9062
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.7698070844301191,
+          "std": 0.038212022151257,
+          "per_seed": [
+            0.7273,
+            0.8014,
+            0.7807
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5396825396825397,
+          "std": 0.09912695235553014,
+          "per_seed": [
+            0.4286,
+            0.5714,
+            0.619
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.8263517528223411
+        },
+        "macro_f1_surface": {
+          "mean": 0.8002199399298141
+        }
+      },
+      "members": [
+        "sev2_E_resnet18_aug_sampler_jitter",
+        "sev2_E_resnet18_aug_sampler_jitter_seed43",
+        "sev2_E_resnet18_aug_sampler_jitter_seed44"
+      ]
+    },
+    {
+      "run_id": "sev2_F_resnet18_aug_sampler_jitter_320",
+      "spec": {
+        "name": "F",
+        "architecture": "resnet18",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run F: sev2_E_resnet18_aug_sampler_jitter with input 320x320 instead of 224x224",
+        "jitter": true,
+        "input_size": [
+          320,
+          320
+        ]
+      },
+      "kind": "seeds",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.7907328047394131,
+          "std": 0.020748234023941145,
+          "per_seed": [
+            0.8122,
+            0.7892,
+            0.7708
+          ]
+        },
+        "recall_high": {
+          "mean": 0.5873015873015873,
+          "std": 0.07273929674533076,
+          "per_seed": [
+            0.5714,
+            0.6667,
+            0.5238
+          ]
+        },
+        "precision_high": {
+          "mean": 0.6987318840579709,
+          "std": 0.0961454876159557,
+          "per_seed": [
+            0.8,
+            0.6087,
+            0.6875
+          ]
+        },
+        "accuracy": {
+          "mean": 0.9104166666666668,
+          "std": 0.013010412496663345,
+          "per_seed": [
+            0.925,
+            0.9,
+            0.9062
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.7696531274097703,
+          "std": 0.029009518051234924,
+          "per_seed": [
+            0.7915,
+            0.7807,
+            0.7367
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5238095238095238,
+          "std": 0.09523809523809526,
+          "per_seed": [
+            0.5238,
+            0.619,
+            0.4286
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.7707480259204397
+        },
+        "macro_f1_surface": {
+          "mean": 0.795530282027492
+        }
+      },
+      "members": [
+        "sev2_F_resnet18_aug_sampler_jitter_320",
+        "sev2_F_resnet18_aug_sampler_jitter_320_seed43",
+        "sev2_F_resnet18_aug_sampler_jitter_320_seed44"
+      ]
+    },
+    {
+      "run_id": "sev2_G_resnet50_aug_sampler_jitter",
+      "spec": {
+        "name": "G",
+        "architecture": "resnet50",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run G: sev2_E_resnet18_aug_sampler_jitter with ResNet-50 instead of ResNet-18",
+        "jitter": true
+      },
+      "kind": "seeds",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.7886852533464994,
+          "std": 0.008239899997917141,
+          "per_seed": [
+            0.7915,
+            0.7794,
+            0.7952
+          ]
+        },
+        "recall_high": {
+          "mean": 0.6666666666666666,
+          "std": 0.1259881576697424,
+          "per_seed": [
+            0.5238,
+            0.7143,
+            0.7619
+          ]
+        },
+        "precision_high": {
+          "mean": 0.6375661375661376,
+          "std": 0.12854529749477608,
+          "per_seed": [
+            0.7857,
+            0.5556,
+            0.5714
+          ]
+        },
+        "accuracy": {
+          "mean": 0.9,
+          "std": 0.016535945694153675,
+          "per_seed": [
+            0.9188,
+            0.8875,
+            0.8938
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.7217473020004214,
+          "std": 0.022943062713314845,
+          "per_seed": [
+            0.7367,
+            0.6953,
+            0.7332
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5714285714285714,
+          "std": 0.17169291787923757,
+          "per_seed": [
+            0.4286,
+            0.5238,
+            0.7619
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.7583901155770226
+        },
+        "macro_f1_surface": {
+          "mean": 0.7926246654266108
+        }
+      },
+      "members": [
+        "sev2_G_resnet50_aug_sampler_jitter",
+        "sev2_G_resnet50_aug_sampler_jitter_seed43",
+        "sev2_G_resnet50_aug_sampler_jitter_seed44"
+      ]
+    },
+    {
+      "run_id": "sev2_H_convnexttiny_aug_sampler_jitter",
+      "spec": {
+        "name": "H",
+        "architecture": "convnext_tiny",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run H: sev2_E_resnet18_aug_sampler_jitter with ConvNeXt-Tiny instead of the ResNet backbone",
+        "jitter": true
+      },
+      "kind": "seeds",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.8080217307883656,
+          "std": 0.04139611980854988,
+          "per_seed": [
+            0.8394,
+            0.8236,
+            0.7611
+          ]
+        },
+        "recall_high": {
+          "mean": 0.5873015873015873,
+          "std": 0.07273929674533076,
+          "per_seed": [
+            0.6667,
+            0.5714,
+            0.5238
+          ]
+        },
+        "precision_high": {
+          "mean": 0.7606598194833488,
+          "std": 0.10608295653379556,
+          "per_seed": [
+            0.7778,
+            0.8571,
+            0.6471
+          ]
+        },
+        "accuracy": {
+          "mean": 0.9208333333333334,
+          "std": 0.018042195912175808,
+          "per_seed": [
+            0.9312,
+            0.9312,
+            0.9
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.7700342475399692,
+          "std": 0.0272471249078839,
+          "per_seed": [
+            0.8014,
+            0.7569,
+            0.7518
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5079365079365079,
+          "std": 0.07273929674533079,
+          "per_seed": [
+            0.5714,
+            0.4286,
+            0.5238
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.8780423280423281
+        },
+        "macro_f1_surface": {
+          "mean": 0.7925493612078979
+        }
+      },
+      "members": [
+        "sev2_H_convnexttiny_aug_sampler_jitter",
+        "sev2_H_convnexttiny_aug_sampler_jitter_seed43",
+        "sev2_H_convnexttiny_aug_sampler_jitter_seed44"
+      ]
+    },
+    {
+      "run_id": "sev2_I_ensemble3_E_resnet18_aug_sampler_jitter",
+      "spec": {
+        "name": "I",
+        "architecture": "resnet18",
+        "augment": true,
+        "imbalance": "sampler",
+        "change": "Run E: sev2_C_resnet18_aug_sampler + box jitter on train (centre \u00b110%, w/h x0.85-1.15; approved exception)",
+        "jitter": true
+      },
+      "kind": "ensemble",
+      "stats": {
+        "macro_f1": {
+          "mean": 0.8013561264444657,
+          "std": 0.0,
+          "per_seed": [
+            0.8014
+          ]
+        },
+        "recall_high": {
+          "mean": 0.5714285714285714,
+          "std": 0.0,
+          "per_seed": [
+            0.5714
+          ]
+        },
+        "precision_high": {
+          "mean": 0.75,
+          "std": 0.0,
+          "per_seed": [
+            0.75
+          ]
+        },
+        "accuracy": {
+          "mean": 0.91875,
+          "std": 0.0,
+          "per_seed": [
+            0.9187
+          ]
+        },
+        "jitter_macro_f1": {
+          "mean": 0.8013561264444657,
+          "std": 0.0,
+          "per_seed": [
+            0.8014
+          ]
+        },
+        "jitter_recall_high": {
+          "mean": 0.5714285714285714,
+          "std": 0.0,
+          "per_seed": [
+            0.5714
+          ]
+        },
+        "macro_f1_curb": {
+          "mean": 0.8455882352941176
+        },
+        "macro_f1_surface": {
+          "mean": 0.7882564741725523
+        }
+      },
+      "members": [
+        "sev2_E_resnet18_aug_sampler_jitter",
+        "sev2_E_resnet18_aug_sampler_jitter_seed43",
+        "sev2_E_resnet18_aug_sampler_jitter_seed44"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "run": "sev2_E_resnet18_aug_sampler_jitter",
+      "vs": "sev2_C_resnet18_aug_sampler",
+      "replaces": true,
+      "d_macro_f1": -0.0007407004191005706,
+      "d_recall_high": 0.015873015873015817
+    },
+    {
+      "run": "sev2_F_resnet18_aug_sampler_jitter_320",
+      "vs": "sev2_E_resnet18_aug_sampler_jitter",
+      "replaces": false,
+      "d_macro_f1": -0.016527167785458374,
+      "d_recall_high": -0.015873015873015817
+    },
+    {
+      "run": "sev2_G_resnet50_aug_sampler_jitter",
+      "vs": "sev2_E_resnet18_aug_sampler_jitter",
+      "replaces": false,
+      "d_macro_f1": -0.018574719178372057,
+      "d_recall_high": 0.06349206349206349
+    },
+    {
+      "run": "sev2_H_convnexttiny_aug_sampler_jitter",
+      "vs": "sev2_E_resnet18_aug_sampler_jitter",
+      "replaces": false,
+      "d_macro_f1": 0.0007617582634941167,
+      "d_recall_high": -0.015873015873015817
+    },
+    {
+      "run": "sev2_I_ensemble3_E_resnet18_aug_sampler_jitter",
+      "vs": "sev2_E_resnet18_aug_sampler_jitter",
+      "replaces": false,
+      "d_macro_f1": -0.005903846080405728,
+      "d_recall_high": -0.031746031746031744
+    }
+  ],
+  "threshold": {
+    "threshold": 0.5,
+    "macro_f1": 0.812206572769953,
+    "recall_high": 0.5714285714285714,
+    "precision_high": 0.8,
+    "f1_per_class": {
+      "low_medium": 0.9577464788732394,
+      "high": 0.6666666666666666
+    },
+    "accuracy": 0.925,
+    "confusion_matrix": [
+      [
+        136,
+        3
+      ],
+      [
+        9,
+        12
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.8014285714285714
+    }
+  },
+  "jitter_val_seed": 2026,
+  "rule": "replace if mean val macro_f1 >= best + 0.02, or within \u00b10.01 and higher mean recall_high",
+  "test_used": false,
+  "rule_best": "sev2_E_resnet18_aug_sampler_jitter",
+  "selected": "sev2_C_resnet18_aug_sampler",
+  "decision": "Owner kept C (10 Nov 2026): no measurable improvement; E won only the recall tie-break by 1 high box over 3 seeds and scored lower on jittered val."
+}

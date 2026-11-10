@@ -1,0 +1,14 @@
+{
+  "run_id": "sev2_I_ensemble3_E_resnet18_aug_sampler_jitter",
+  "checkpoints": [
+    "experiments/sev2_E_resnet18_aug_sampler_jitter/best_model.pt",
+    "experiments/sev2_E_resnet18_aug_sampler_jitter_seed43/best_model.pt",
+    "experiments/sev2_E_resnet18_aug_sampler_jitter_seed44/best_model.pt"
+  ],
+  "threshold": 0.5,
+  "input_size": [
+    224,
+    224
+  ],
+  "combine": "mean p_high"
+}
