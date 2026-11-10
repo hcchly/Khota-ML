@@ -1,0 +1,125 @@
+{
+  "reference": {
+    "run_id": "sev2_C_resnet18_aug_sampler",
+    "macro_f1": 0.808,
+    "recall_high": 0.587
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false,
+  "K": {
+    "dinov2_vits14": {
+      "run_id": "sev2_K_dinov2_vits14_logreg",
+      "val": {
+        "threshold": 0.5,
+        "macro_f1": 0.6264425321859782,
+        "recall_high": 0.5238095238095238,
+        "precision_high": 0.3055555555555556,
+        "f1_per_class": {
+          "low_medium": 0.8669201520912547,
+          "high": 0.38596491228070173
+        },
+        "accuracy": 0.78125,
+        "confusion_matrix": [
+          [
+            114,
+            25
+          ],
+          [
+            10,
+            11
+          ]
+        ],
+        "macro_f1_by_defect": {
+          "curb_ramp_issue": 0.60625,
+          "surface_damage": 0.6287187989315649
+        }
+      },
+      "replaces_C": false
+    },
+    "clip_vitb32": {
+      "run_id": "sev2_K_clip_vitb32_logreg",
+      "val": {
+        "threshold": 0.5,
+        "macro_f1": 0.6857142857142857,
+        "recall_high": 0.42857142857142855,
+        "precision_high": 0.47368421052631576,
+        "f1_per_class": {
+          "low_medium": 0.9214285714285714,
+          "high": 0.45
+        },
+        "accuracy": 0.8625,
+        "confusion_matrix": [
+          [
+            129,
+            10
+          ],
+          [
+            12,
+            9
+          ]
+        ],
+        "macro_f1_by_defect": {
+          "curb_ramp_issue": 0.7375,
+          "surface_damage": 0.6637096774193548
+        }
+      },
+      "replaces_C": false
+    }
+  },
+  "L": {
+    "run_id": "sev2_L_resnet18_aug_sampler_expand050",
+    "stats": {
+      "macro_f1": [
+        0.7402205637499755,
+        0.02784242880156931
+      ],
+      "recall_high": [
+        0.4603174603174603,
+        0.027492869961410746
+      ],
+      "precision_high": 0.6626180836707153,
+      "accuracy": 0.8958333333333334,
+      "macro_f1_curb": 0.7316257816257816,
+      "macro_f1_surface": 0.7413613631193611,
+      "per_seed": [
+        0.7367,
+        0.7143,
+        0.7696
+      ],
+      "best_epochs": [
+        8,
+        5,
+        13
+      ]
+    },
+    "report_only": true,
+    "beats_C_by_0.02": false
+  },
+  "N": {
+    "C": {
+      "model": "sev2_C_resnet18_aug_sampler",
+      "macro_f1": [
+        0.7226648976222559,
+        0.07457601101873108
+      ],
+      "recall_high": [
+        0.41590683229813663,
+        0.15078339916322073
+      ]
+    },
+    "second": {
+      "model": "sev2_L_resnet18_aug_sampler_expand050",
+      "macro_f1": [
+        0.6769807664283796,
+        0.09135523417436868
+      ],
+      "recall_high": [
+        0.312944099378882,
+        0.14633997504169755
+      ]
+    }
+  }
+}

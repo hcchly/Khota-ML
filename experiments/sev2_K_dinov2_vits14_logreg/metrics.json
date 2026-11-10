@@ -1,0 +1,38 @@
+{
+  "run_id": "sev2_K_dinov2_vits14_logreg",
+  "backbone": "frozen DINOv2 ViT-S/14 (CLS token, 384-d)",
+  "classifier": "StandardScaler + LogisticRegression(class_weight='balanced', C=1.0, max_iter=5000)",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.6264425321859782,
+    "recall_high": 0.5238095238095238,
+    "precision_high": 0.3055555555555556,
+    "f1_per_class": {
+      "low_medium": 0.8669201520912547,
+      "high": 0.38596491228070173
+    },
+    "accuracy": 0.78125,
+    "confusion_matrix": [
+      [
+        114,
+        25
+      ],
+      [
+        10,
+        11
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.60625,
+      "surface_damage": 0.6287187989315649
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "replaces_C": false,
+  "d_macro_f1_vs_C_mean": -0.18155746781402182,
+  "d_recall_high_vs_C_mean": -0.06319047619047613,
+  "test_used": false
+}

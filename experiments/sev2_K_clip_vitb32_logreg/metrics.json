@@ -1,0 +1,38 @@
+{
+  "run_id": "sev2_K_clip_vitb32_logreg",
+  "backbone": "frozen CLIP ViT-B/32 OpenAI (image embedding, 512-d)",
+  "classifier": "StandardScaler + LogisticRegression(class_weight='balanced', C=1.0, max_iter=5000)",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.6857142857142857,
+    "recall_high": 0.42857142857142855,
+    "precision_high": 0.47368421052631576,
+    "f1_per_class": {
+      "low_medium": 0.9214285714285714,
+      "high": 0.45
+    },
+    "accuracy": 0.8625,
+    "confusion_matrix": [
+      [
+        129,
+        10
+      ],
+      [
+        12,
+        9
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.7375,
+      "surface_damage": 0.6637096774193548
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "replaces_C": false,
+  "d_macro_f1_vs_C_mean": -0.12228571428571433,
+  "d_recall_high_vs_C_mean": -0.15842857142857142,
+  "test_used": false
+}

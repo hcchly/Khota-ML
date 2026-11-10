@@ -1,0 +1,302 @@
+{
+  "folds": 5,
+  "fold_sizes": [
+    150,
+    229,
+    163,
+    169,
+    144
+  ],
+  "fold_high": [
+    24,
+    25,
+    30,
+    23,
+    14
+  ],
+  "second_model": "sev2_L_resnet18_aug_sampler_expand050",
+  "models": {
+    "C": {
+      "model": "sev2_C_resnet18_aug_sampler",
+      "kind": "cnn",
+      "epochs": 8,
+      "per_fold": [
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.8338870431893688,
+          "recall_high": 0.625,
+          "precision_high": 0.8333333333333334,
+          "f1_per_class": {
+            "low_medium": 0.9534883720930233,
+            "high": 0.7142857142857143
+          },
+          "accuracy": 0.92,
+          "confusion_matrix": [
+            [
+              123,
+              3
+            ],
+            [
+              9,
+              15
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.7301587301587301,
+            "surface_damage": 0.851948051948052
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.7561782011768002,
+          "recall_high": 0.48,
+          "precision_high": 0.6666666666666666,
+          "f1_per_class": {
+            "low_medium": 0.9542168674698795,
+            "high": 0.5581395348837209
+          },
+          "accuracy": 0.9170305676855895,
+          "confusion_matrix": [
+            [
+              198,
+              6
+            ],
+            [
+              13,
+              12
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.46153846153846156,
+            "surface_damage": 0.7957894736842105
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.6997716053930598,
+          "recall_high": 0.4,
+          "precision_high": 0.631578947368421,
+          "f1_per_class": {
+            "low_medium": 0.9097472924187726,
+            "high": 0.4897959183673469
+          },
+          "accuracy": 0.8466257668711656,
+          "confusion_matrix": [
+            [
+              126,
+              7
+            ],
+            [
+              18,
+              12
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.5732758620689655,
+            "surface_damage": 0.7249136874930393
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.641669456533869,
+          "recall_high": 0.21739130434782608,
+          "precision_high": 0.8333333333333334,
+          "f1_per_class": {
+            "low_medium": 0.9385113268608414,
+            "high": 0.3448275862068966
+          },
+          "accuracy": 0.8875739644970414,
+          "confusion_matrix": [
+            [
+              145,
+              1
+            ],
+            [
+              18,
+              5
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.4230769230769231,
+            "surface_damage": 0.7166944598851214
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.6818181818181819,
+          "recall_high": 0.35714285714285715,
+          "precision_high": 0.5,
+          "f1_per_class": {
+            "low_medium": 0.946969696969697,
+            "high": 0.4166666666666667
+          },
+          "accuracy": 0.9027777777777778,
+          "confusion_matrix": [
+            [
+              125,
+              5
+            ],
+            [
+              9,
+              5
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.6190476190476191,
+            "surface_damage": 0.6996996996996997
+          }
+        }
+      ],
+      "macro_f1": [
+        0.7226648976222559,
+        0.07457601101873108
+      ],
+      "recall_high": [
+        0.41590683229813663,
+        0.15078339916322073
+      ]
+    },
+    "second": {
+      "model": "sev2_L_resnet18_aug_sampler_expand050",
+      "kind": "cnn",
+      "epochs": 8,
+      "per_fold": [
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.7789566755083996,
+          "recall_high": 0.5,
+          "precision_high": 0.8,
+          "f1_per_class": {
+            "low_medium": 0.9425287356321839,
+            "high": 0.6153846153846154
+          },
+          "accuracy": 0.9,
+          "confusion_matrix": [
+            [
+              123,
+              3
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.7301587301587301,
+            "surface_damage": 0.7868589743589743
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.706112799729821,
+          "recall_high": 0.32,
+          "precision_high": 0.8,
+          "f1_per_class": {
+            "low_medium": 0.9550827423167849,
+            "high": 0.45714285714285713
+          },
+          "accuracy": 0.9170305676855895,
+          "confusion_matrix": [
+            [
+              202,
+              2
+            ],
+            [
+              17,
+              8
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.676923076923077,
+            "surface_damage": 0.7109869646182496
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.7372662798194713,
+          "recall_high": 0.4,
+          "precision_high": 0.8571428571428571,
+          "f1_per_class": {
+            "low_medium": 0.9290780141843972,
+            "high": 0.5454545454545454
+          },
+          "accuracy": 0.8773006134969326,
+          "confusion_matrix": [
+            [
+              131,
+              2
+            ],
+            [
+              18,
+              12
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.6333333333333333,
+            "surface_damage": 0.7534376481744902
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.5716589861751152,
+          "recall_high": 0.13043478260869565,
+          "precision_high": 0.6,
+          "f1_per_class": {
+            "low_medium": 0.9290322580645162,
+            "high": 0.21428571428571427
+          },
+          "accuracy": 0.8698224852071006,
+          "confusion_matrix": [
+            [
+              144,
+              2
+            ],
+            [
+              20,
+              3
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.4117647058823529,
+            "surface_damage": 0.6327982117455802
+          }
+        },
+        {
+          "threshold": 0.5,
+          "macro_f1": 0.5909090909090908,
+          "recall_high": 0.21428571428571427,
+          "precision_high": 0.3,
+          "f1_per_class": {
+            "low_medium": 0.9318181818181818,
+            "high": 0.25
+          },
+          "accuracy": 0.875,
+          "confusion_matrix": [
+            [
+              123,
+              7
+            ],
+            [
+              11,
+              3
+            ]
+          ],
+          "macro_f1_by_defect": {
+            "curb_ramp_issue": 0.5213675213675213,
+            "surface_damage": 0.6088888888888889
+          }
+        }
+      ],
+      "macro_f1": [
+        0.6769807664283796,
+        0.09135523417436868
+      ],
+      "recall_high": [
+        0.312944099378882,
+        0.14633997504169755
+      ]
+    }
+  },
+  "test_used": false,
+  "report_only": true
+}

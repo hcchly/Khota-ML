@@ -92,7 +92,8 @@ def jitter_box(box, rng: np.random.Generator):
     return (min(max(cx, 0.0), 1.0), min(max(cy, 0.0), 1.0), w, h)
 
 
-def prepare_crops(frame: pd.DataFrame, size, jitter_seed: int | None = None, variants: int = 1):
+def prepare_crops(frame: pd.DataFrame, size, jitter_seed: int | None = None, variants: int = 1,
+                  expand: float = CROP_EXPAND):
     """crop_box (expand 0.20) on the full-resolution image, then resize (shared resize_crop).
 
     With `jitter_seed`, each box is jittered before crop_box; `variants` > 1 gives a list of crops per box.
@@ -106,7 +107,7 @@ def prepare_crops(frame: pd.DataFrame, size, jitter_seed: int | None = None, var
             for row in rows.itertuples(index=False):
                 box = (row.x_center, row.y_center, row.width, row.height)
                 if rng is None:
-                    images.append(resize_crop(crop_box(image, box, expand=CROP_EXPAND), size))
+                    images.append(resize_crop(crop_box(image, box, expand=expand), size))
                 else:
                     cut = [resize_crop(crop_box(image, jitter_box(box, rng), expand=CROP_EXPAND), size)
                            for _ in range(variants)]
@@ -124,11 +125,11 @@ class DataStore:
         self.val = frame[frame.split == "val"]
         self._plain, self._jit_val, self._jit_train = {}, {}, (None, None)
 
-    def plain(self, split: str, size):
-        key = (split, tuple(size))
+    def plain(self, split: str, size, expand: float = CROP_EXPAND):
+        key = (split, tuple(size), expand)
         if key not in self._plain:
-            print(f"  cutting {split} crops at {size[0]}x{size[1]}…")
-            self._plain[key] = prepare_crops(self.train if split == "train" else self.val, size)
+            print(f"  cutting {split} crops at {size[0]}x{size[1]}, expand {expand}…")
+            self._plain[key] = prepare_crops(self.train if split == "train" else self.val, size, expand=expand)
         return self._plain[key]
 
     def jittered_val(self, size):
@@ -215,12 +216,18 @@ def size_of(spec: dict) -> tuple:
     return tuple(spec.get("input_size", (224, 224)))
 
 
+def expand_of(spec: dict) -> float:
+    return float(spec.get("crop_expand", CROP_EXPAND))
+
+
 def run_id_for(spec: dict, seed: int) -> str:
     rid = f"sev2_{spec['name']}_{spec['architecture'].replace('_', '')}_{'aug' if spec['augment'] else 'noaug'}_{spec['imbalance']}"
     if spec.get("jitter"):
         rid += "_jitter"
     if size_of(spec) != (224, 224):
         rid += f"_{size_of(spec)[0]}"
+    if expand_of(spec) != CROP_EXPAND:
+        rid += f"_expand{round(expand_of(spec) * 100):03d}"
     return rid if seed == CONFIG_SEED else f"{rid}_seed{seed}"
 
 
@@ -232,10 +239,12 @@ def train_run(spec: dict, seed: int, store: DataStore, device, force: bool, chan
         return json.loads((run_dir / "metrics.json").read_text())
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    size = size_of(spec)
-    _, tr_y, _ = store.plain("train", size)
-    tr_x = store.jittered_train(size, seed)[0] if spec.get("jitter") else store.plain("train", size)[0]
-    va_x, va_y, va_d = store.plain("val", size)
+    size, expand = size_of(spec), expand_of(spec)
+    if spec.get("jitter") and expand != CROP_EXPAND:
+        raise ValueError("box jitter is only implemented for the default crop expand")
+    _, tr_y, _ = store.plain("train", size, expand)
+    tr_x = store.jittered_train(size, seed)[0] if spec.get("jitter") else store.plain("train", size, expand)[0]
+    va_x, va_y, va_d = store.plain("val", size, expand)
     seed_everything(seed)
     counts = np.bincount(tr_y, minlength=len(SEVERITY_CLASSES)).astype(np.float64)
     generator = torch.Generator().manual_seed(seed)
@@ -287,7 +296,7 @@ def train_run(spec: dict, seed: int, store: DataStore, device, force: bool, chan
     metrics = full_metrics(va_y, p_val, va_d, 0.5)
     torch.save({"model_state_dict": best_state, "architecture": spec["architecture"],
                 "severity_classes": SEVERITY_CLASSES, "detection_classes": DETECTION_CLASSES,
-                "input_size": size, "crop_expand": CROP_EXPAND, "threshold": 0.5,
+                "input_size": size, "crop_expand": expand, "threshold": 0.5,
                 "run_id": run_id, "seed": seed, "best_epoch": best_epoch}, run_dir / "best_model.pt")
     pd.DataFrame(history).to_csv(run_dir / "history.csv", index=False)
     np.save(run_dir / "val_p_high.npy", p_val)
@@ -326,7 +335,7 @@ def save_outputs(run_dir: Path, metrics: dict, suffix: str = "") -> None:
 
 def settings_text(spec: dict, extra: str) -> str:
     size = size_of(spec)
-    return (f"{spec['architecture']} ImageNet-pretrained; crop_box expand={CROP_EXPAND} -> {size[0]}x{size[1]}; "
+    return (f"{spec['architecture']} ImageNet-pretrained; crop_box expand={expand_of(spec)} -> {size[0]}x{size[1]}; "
             f"augment={AUGMENT_TEXT if spec['augment'] else 'none'}; "
             f"box_jitter={'centre ±10%, w/h x0.85-1.15, train only, ' + str(JITTER_VARIANTS) + ' variants/box' if spec.get('jitter') else 'none'}; "
             f"imbalance={spec['imbalance']}; batch={BATCH_SIZE}; lr={LEARNING_RATE}; AdamW wd=1e-4; "

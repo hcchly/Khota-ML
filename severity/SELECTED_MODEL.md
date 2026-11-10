@@ -63,3 +63,30 @@ checkpoint, threshold (0.50) and val metrics above are unchanged.
 Round 2 checkpoints are not committed (outputs, metrics, histories, confusion matrices and p_high arrays are, in
 `experiments/sev2_{E,F,G,H,I}_*`; summary in `experiments/severity_v2_round2.json`). `sev2_I_*/ensemble.json`
 points at E checkpoints that exist only locally.
+
+## Round 3 (10 Nov 2026) — no improvement; C stays selected
+
+Decisions before the round (owner): M (3-level auxiliary head) dropped — v2 has no 3-level labels and v1 is not
+mixed in. L (crop expand 0.50, conflicts with AGENTS.md rule 5) and N (cross-validation) are report-only. K may
+replace C only by the round rule. Threshold 0.5 throughout; test split never read.
+
+| run | what | macro_f1 | recall_high | precision_high | accuracy | mF1 curb | mF1 surface | status |
+|---|---|---|---|---|---|---|---|---|
+| majority baseline | val | 0.465 | 0.000 | — | 0.869 | — | — | |
+| **C** | val, 3 seeds | **0.808 ± 0.015** | **0.587 ± 0.027** | 0.757 | 0.921 | 0.846 | 0.797 | selected |
+| K-DINOv2 ViT-S/14 + LR | val, single (frozen, deterministic) | 0.626 | 0.524 | 0.306 | 0.781 | 0.606 | 0.629 | does not replace C |
+| K-CLIP ViT-B/32 + LR | val, single (frozen, deterministic) | 0.686 | 0.429 | 0.474 | 0.863 | 0.738 | 0.664 | does not replace C |
+| L: C with expand 0.50 | val, 3 seeds | 0.740 ± 0.028 | 0.460 ± 0.027 | 0.663 | 0.896 | 0.732 | 0.741 | report only, not flagged |
+| N: C | 5-fold CV on train+val | 0.723 ± 0.075 | 0.416 ± 0.151 | 0.693 | 0.895 | 0.561 | 0.758 | report only |
+| N: L (best of K/L) | 5-fold CV on train+val | 0.677 ± 0.091 | 0.313 ± 0.146 | 0.671 | 0.888 | 0.595 | 0.699 | report only |
+
+K: features of the same crops as C (expand 0.20 → 224×224), StandardScaler + LogisticRegression(class_weight=
+"balanced", C=1.0). DINOv2 weights are the official ViT-S/14 loaded through `timm`
+(`vit_small_patch14_dinov2.lvd142m`) because the `torch.hub` code needs Python ≥ 3.10; CLIP is OpenAI ViT-B/32 via
+`open_clip`. N: StratifiedGroupKFold(5, seed 42) on `location_id` over the 855 train+val boxes (no location in two
+folds, no test image; folds in `experiments/sev2_N_cv5_trainval/folds.csv`); each fold trains a fixed 8 epochs
+(median best epoch of the val runs), no early stopping.
+
+**Caveat for the report:** C's cross-validated macro_f1 (0.723 ± 0.075, recall_high 0.416, per fold 0.64–0.83) is
+well below its val score (0.808). The val split appears to be one of the easier partitions, so the Release 1 test
+result may be closer to the CV range. CV is report-only and does not change the selection or the threshold.

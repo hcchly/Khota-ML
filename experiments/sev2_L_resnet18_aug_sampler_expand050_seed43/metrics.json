@@ -1,0 +1,45 @@
+{
+  "run_id": "sev2_L_resnet18_aug_sampler_expand050_seed43",
+  "spec": {
+    "name": "L",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run L (report only): C with crop_box expand 0.50 instead of 0.20",
+    "crop_expand": 0.5
+  },
+  "seed": 43,
+  "best_epoch": 5,
+  "epochs_run": 10,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.7142857142857143,
+    "recall_high": 0.47619047619047616,
+    "precision_high": 0.5263157894736842,
+    "f1_per_class": {
+      "low_medium": 0.9285714285714286,
+      "high": 0.5
+    },
+    "accuracy": 0.875,
+    "confusion_matrix": [
+      [
+        130,
+        9
+      ],
+      [
+        11,
+        10
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.6464646464646464,
+      "surface_damage": 0.7277001436593966
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false
+}
