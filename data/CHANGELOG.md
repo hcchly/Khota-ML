@@ -15,3 +15,7 @@
 - GPS for batch 3 added (`data/source/gps.csv`), so batch 3 is no longer one no-GPS group. New `locations.csv`
   (272 locations) and new `split.csv` (seed 42). The v1 split is kept as `data/v1_split.csv` for the record.
 - RYD-0591 B01 is `curb_ramp_issue` (changed in Roboflow after the 9 Nov export). Prompt 1 re-checks this.
+- Roboflow exports used from 10 Nov: batch 1 v5, **batch 2 v6** (the RYD-0591 fix, exported 10 Nov 12:17 GMT),
+  batch 3 v4. Editing RYD-0591 gave it a new Roboflow filename, so `Image_Index` row RYD-0591 (cells C559, D559)
+  changed from `RYD-0591_jpg.rf.ed2298735ee2892d5223ad5d7ed2e579.jpg/.txt` to
+  `RYD-0591_jpg.rf.8967894238be4157a8e8ed00bd529034.jpg/.txt`. Filename only; no other cell changed.
