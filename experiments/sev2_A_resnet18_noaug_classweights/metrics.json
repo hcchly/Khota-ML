@@ -1,0 +1,44 @@
+{
+  "run_id": "sev2_A_resnet18_noaug_classweights",
+  "spec": {
+    "name": "A",
+    "architecture": "resnet18",
+    "augment": false,
+    "imbalance": "classweights",
+    "change": "Run A: v1 winner (ResNet-18, crop, no aug, class weights), now binary"
+  },
+  "seed": 42,
+  "best_epoch": 7,
+  "epochs_run": 12,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.7803822194066097,
+    "recall_high": 0.47619047619047616,
+    "precision_high": 0.8333333333333334,
+    "f1_per_class": {
+      "low_medium": 0.9547038327526133,
+      "high": 0.6060606060606061
+    },
+    "accuracy": 0.91875,
+    "confusion_matrix": [
+      [
+        137,
+        2
+      ],
+      [
+        11,
+        10
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8055555555555556,
+      "surface_damage": 0.7743839456986867
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false
+}

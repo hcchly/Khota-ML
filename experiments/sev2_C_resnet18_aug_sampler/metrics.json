@@ -1,0 +1,69 @@
+{
+  "run_id": "sev2_C_resnet18_aug_sampler",
+  "spec": {
+    "name": "C",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run C: sev2_B_resnet18_aug_classweights with weighted random sampler instead of class weights"
+  },
+  "seed": 42,
+  "best_epoch": 4,
+  "epochs_run": 9,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.812206572769953,
+    "recall_high": 0.5714285714285714,
+    "precision_high": 0.8,
+    "f1_per_class": {
+      "low_medium": 0.9577464788732394,
+      "high": 0.6666666666666666
+    },
+    "accuracy": 0.925,
+    "confusion_matrix": [
+      [
+        136,
+        3
+      ],
+      [
+        9,
+        12
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.8014285714285714
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false,
+  "val_tuned": {
+    "threshold": 0.5,
+    "macro_f1": 0.812206572769953,
+    "recall_high": 0.5714285714285714,
+    "precision_high": 0.8,
+    "f1_per_class": {
+      "low_medium": 0.9577464788732394,
+      "high": 0.6666666666666666
+    },
+    "accuracy": 0.925,
+    "confusion_matrix": [
+      [
+        136,
+        3
+      ],
+      [
+        9,
+        12
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.8014285714285714
+    }
+  }
+}

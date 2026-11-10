@@ -1,0 +1,44 @@
+{
+  "run_id": "sev2_B_resnet18_aug_classweights",
+  "spec": {
+    "name": "B",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "classweights",
+    "change": "Run B: Run A + allowed train-only augmentation"
+  },
+  "seed": 42,
+  "best_epoch": 2,
+  "epochs_run": 7,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.7807468311065433,
+    "recall_high": 0.6190476190476191,
+    "precision_high": 0.6190476190476191,
+    "f1_per_class": {
+      "low_medium": 0.9424460431654677,
+      "high": 0.6190476190476191
+    },
+    "accuracy": 0.9,
+    "confusion_matrix": [
+      [
+        131,
+        8
+      ],
+      [
+        8,
+        13
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.7375,
+      "surface_damage": 0.788109756097561
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false
+}

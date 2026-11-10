@@ -1,0 +1,11 @@
+{
+  "run_id": "sev2_C_resnet18_aug_sampler",
+  "spec": {
+    "name": "C",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run C: sev2_B_resnet18_aug_classweights with weighted random sampler instead of class weights"
+  },
+  "threshold": 0.5
+}

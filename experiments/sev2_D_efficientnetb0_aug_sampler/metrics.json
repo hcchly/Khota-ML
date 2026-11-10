@@ -1,0 +1,44 @@
+{
+  "run_id": "sev2_D_efficientnetb0_aug_sampler",
+  "spec": {
+    "name": "D",
+    "architecture": "efficientnet_b0",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run D: sev2_C_resnet18_aug_sampler with EfficientNet-B0 instead of ResNet-18"
+  },
+  "seed": 42,
+  "best_epoch": 13,
+  "epochs_run": 18,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.7914786967418546,
+    "recall_high": 0.5238095238095238,
+    "precision_high": 0.7857142857142857,
+    "f1_per_class": {
+      "low_medium": 0.9543859649122807,
+      "high": 0.6285714285714286
+    },
+    "accuracy": 0.91875,
+    "confusion_matrix": [
+      [
+        136,
+        3
+      ],
+      [
+        10,
+        11
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.9142857142857143,
+      "surface_damage": 0.7617142857142857
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false
+}

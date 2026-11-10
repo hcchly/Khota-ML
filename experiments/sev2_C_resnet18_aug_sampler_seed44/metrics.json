@@ -1,0 +1,44 @@
+{
+  "run_id": "sev2_C_resnet18_aug_sampler_seed44",
+  "spec": {
+    "name": "C",
+    "architecture": "resnet18",
+    "augment": true,
+    "imbalance": "sampler",
+    "change": "Run C: sev2_B_resnet18_aug_classweights with weighted random sampler instead of class weights"
+  },
+  "seed": 44,
+  "best_epoch": 10,
+  "epochs_run": 15,
+  "device": "mps",
+  "val": {
+    "threshold": 0.5,
+    "macro_f1": 0.8208286674132139,
+    "recall_high": 0.6190476190476191,
+    "precision_high": 0.7647058823529411,
+    "f1_per_class": {
+      "low_medium": 0.9574468085106383,
+      "high": 0.6842105263157895
+    },
+    "accuracy": 0.925,
+    "confusion_matrix": [
+      [
+        135,
+        4
+      ],
+      [
+        8,
+        13
+      ]
+    ],
+    "macro_f1_by_defect": {
+      "curb_ramp_issue": 0.8455882352941176,
+      "surface_damage": 0.8131720430107527
+    }
+  },
+  "baseline": {
+    "macro_f1": 0.465,
+    "accuracy": 0.869
+  },
+  "test_used": false
+}
