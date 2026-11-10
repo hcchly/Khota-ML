@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedGroupKFold
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from khota_ml.config import DETECTION_CLASSES, NO_DEFECT, SEED, SEVERITY_CLASSES  # noqa: E402
+from khota_ml.config import DETECTION_CLASSES, HIGH, NO_DEFECT, SEED, SEVERITY_CLASSES  # noqa: E402
 
 ANNOTATIONS = ROOT / "data" / "annotations.csv"
 SPLIT_OUT = ROOT / "data" / "split.csv"
@@ -61,7 +61,7 @@ def _passes(annotations: pd.DataFrame, assignments: dict[str, str]) -> bool:
     for split in ("val", "test"):
         ids = {image_id for image_id, name in assignments.items() if name == split}
         n_boxes, severity, defect = _box_counts(annotations, ids)
-        if severity.get(SEVERITY_CLASSES[2], 0) < 10 or defect.get(DETECTION_CLASSES[0], 0) < 15:
+        if severity.get(HIGH, 0) < 10 or defect.get(DETECTION_CLASSES[0], 0) < 15:
             return False
         if n_boxes == 0:
             return False
@@ -147,7 +147,9 @@ def main() -> None:
     print("Image counts:")
     print(stats[["split", "images_total", "images_with_boxes", "images_without_boxes"]].drop_duplicates().to_string(index=False))
     print(f"Wrote {SPLIT_OUT.relative_to(ROOT)} and {STATS_OUT.relative_to(ROOT)}")
-    print("Batch 3 no-GPS groups were kept intact (nogps_01 and nogps_02).")
+    nogps = sorted(split_frame.location_id[split_frame.location_id.str.startswith("nogps")].unique())
+    if nogps:
+        print(f"No-GPS groups kept intact: {nogps}")
 
 
 if __name__ == "__main__":

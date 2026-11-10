@@ -1,109 +1,262 @@
-# Prompts for Codex
+# Prompts — version 2
 
-`AGENTS.md` is at the root of the repository. Codex reads it on its own, so the rules apply to you and to your
-friend.
+Give these to Claude Code (or Codex) inside the repository, one at a time, in order. The agent reads
+`AGENTS.md` by itself (Claude Code through `CLAUDE.md`). Paste the text inside the box exactly.
 
-Before prompt 1, one person does this **by hand**:
+| # | Prompt | Who | When |
+|---|---|---|---|
+| 0 | Download the data (by hand) | one person | now |
+| 1 | Shared setup check | one person | now, once |
+| 2 | Severity model | Haifa | after 1 |
+| 3 | Detection model | Hala | after 1 (in parallel with 2) |
+| 4 | Final evaluation, Release 1 (test, once) | one person | when 2 and 3 are final |
+| 5 | Pipeline: detection → crop → severity | both agree | Release 2 |
+| 6 | Pipeline evaluation (test, once) | one person | after 5 |
+| 7 | Analysis worker (Firebase) | one person | after 5 |
+| 8 | App integration — run in the **app** repo `hcchly/Khota` | app team | after 7 |
+| 9 | End-to-end system test and timing | one person | after 8 |
 
-1. Download the shared Google Drive folder `all_batches_boxes` (the three Roboflow YOLOv8 exports).
-2. Put everything inside `raw/` in the repository (unzip any zip files there). The layout inside `raw/` does not
-   matter.
-3. Optional but recommended: put the original batch 3 photos (`RYD-0683` … `RYD-0733`, HEIC or JPG, named by
-   Image_ID) in `raw/batch3_originals/` so their GPS can be read.
-
-Run prompt 1 first, **once**, by one person. Commit its output. Then each person runs their own prompt.
-
----
-
-## Prompt 1: shared setup (one person)
-
-```
-Read AGENTS.md first and follow it exactly.
-
-The labels are already converted. Do not rewrite scripts/convert_annotations.py or scripts/make_locations.py.
-
-1. Install what is needed: pandas, openpyxl, numpy, pillow, pillow-heif, ultralytics, torch, torchvision, scikit-learn, matplotlib.
-2. If raw/batch3_originals/ exists, run: python scripts/make_locations.py --originals raw/batch3_originals
-   Otherwise run: python scripts/make_locations.py
-   Show me the output.
-3. Run: python scripts/convert_annotations.py --raw raw/
-   If it stops, show me every problem and stop. Do not change the Excel or the labels yourself.
-4. Print the image sizes (width x height) found in raw/ for the images in data/annotations.csv, as a count per size.
-   If the images were resized by Roboflow to 640 or smaller, warn me, because severity crops need full resolution.
-5. Write khota_ml/crop.py (section 5), khota_ml/metrics.py (section 7) and khota_ml/data.py (load annotations.csv
-   and split.csv, find an image under raw/ by image_file).
-6. Write scripts/make_split.py exactly as in AGENTS.md section 4 and run it. Show me reports/split_stats.csv and the
-   accepted seed.
-7. Write scripts/make_yolo_labels.py: from annotations.csv and split.csv, build datasets/yolo/{train,val}/images and
-   labels (copy or link the images from raw/, one label line per box: class_id x y w h; an empty label file for
-   no_defect images) and datasets/yolo/data.yaml with names in the order of khota_ml/config.py. Do not build test
-   folders. Run it and print the counts per split.
-8. Write scripts/baseline.py: majority class of train predicted for every val box; print accuracy and macro_f1
-   (section 7) and add its row to experiments/experiments.csv.
-
-Do not train any model yet. Do not read the test split except to count boxes in the split stats.
-```
+Already done in version 2 (do not redo): `data/annotations.csv`, `data/locations.csv`, `data/split.csv`
+(seed 42, never regenerate) and the majority baseline (`experiments/experiments.csv`).
 
 ---
 
-## Prompt 2: Haifa, severity model
+## Step 0 — by hand: download the data
+
+1. In Roboflow, export each batch again **now** (after the last fixes, e.g. RYD-0591 B01 = curb-ramp-issue):
+   *Versions → Generate* with **no resize** and **no augmentation** (only auto-orient) → *Download → YOLOv8*.
+2. Unzip the three exports inside `raw/` (any folder names). Make sure the images are there, not only the labels
+   (the zips sent on 9 Nov were missing most images).
+3. Do not commit `raw/`.
+
+---
+
+## Prompt 1 — shared setup check (one person, once)
 
 ```
-Read AGENTS.md first and follow it exactly. I own severity/ and must not change shared code without asking.
+Read AGENTS.md first and follow it exactly. This is version 2 (binary severity).
 
-Build the severity classifier:
-1. Use data/annotations.csv and data/split.csv. Use only rows with defect_class curb_ramp_issue or surface_damage (no no_defect).
-2. Crop every box with khota_ml.crop.crop_box (expand=0.20) from the full-resolution image. Resize the crop to 224x224 for the model.
-3. Use a pretrained backbone (start with EfficientNet-B0 or ResNet-18) and class weights from train counts.
-4. Run 1: no augmentation. Run 2: the augmentation allowed in AGENTS.md section 8, train only.
-   Run 3: the best of runs 1-2 with the full image instead of the crop (section 8, severity input).
-5. For each run report on val: macro_f1 (main), accuracy, F1 per class, confusion matrix, and the baseline numbers next to them.
-   Also report macro_f1 separately for curb_ramp_issue boxes and surface_damage boxes.
-   Append one row per run to experiments/experiments.csv.
+The labels, locations and split are already made. Do not rewrite scripts/convert_annotations.py,
+scripts/make_locations.py or scripts/make_split.py, and never regenerate data/split.csv.
+
+1. Install what is needed: pandas, openpyxl, numpy, pillow, ultralytics, torch, torchvision, scikit-learn, matplotlib.
+2. Run: python scripts/convert_annotations.py --raw raw/
+   It must say 0 problems, 689 images, 1010 boxes. If it stops, show me every problem and stop. Do not change the
+   Excel or the labels yourself.
+3. Run git diff --stat data/annotations.csv. It must be unchanged except for image_file names if Roboflow renamed the
+   files. If boxes, classes or severities changed, show me the diff and stop.
+4. Print the image sizes (width x height) of the images in data/annotations.csv, as a count per size. Warn me if
+   any are 640 px or smaller (severity crops need full resolution).
+5. Run scripts/make_yolo_labels.py and print the image and box counts per split (train, val). Check that the counts
+   match AGENTS.md section 4.
+6. Show me a summary and commit with the message "v2: data check and YOLO dataset".
+```
+
+---
+
+## Prompt 2 — Haifa, severity model (v2)
+
+```
+Read AGENTS.md and severity/AGENTS.md first and follow them exactly. I own severity/ and must not change shared
+code without asking. This is version 2: two classes, low_medium and high (config.SEVERITY_CLASSES).
+
+Write severity/train.py (reuse the structure of severity/train_v1.py) and run these experiments, one change per run,
+all on train, compared on val:
+1. Data: rows of data/annotations.csv with defect_class curb_ramp_issue or surface_damage, split from data/split.csv.
+   Crop every box with khota_ml.crop.crop_box (expand=0.20) from the full-resolution image, resize to 224x224.
+2. Run A: ResNet-18 ImageNet-pretrained, crop input, no augmentation, class weights from train counts
+   (the v1 winner, now binary). batch 32, lr 1e-4, max 20 epochs, early stopping on val macro_f1 (patience 5).
+3. Run B: Run A + the augmentation allowed in AGENTS.md section 8 (train only).
+4. Run C: the better of A/B but with a weighted random sampler instead of class weights (never both).
+5. Run D: the best so far with EfficientNet-B0 instead of ResNet-18.
+6. For the best run, choose the decision threshold for high on val (the value of p_high that maximises val
+   macro_f1, searched from 0.10 to 0.90 in steps of 0.05) and report val results at 0.5 and at that threshold.
+7. Repeat the best run with seeds 43 and 44 and report mean ± std of val macro_f1 and recall_high.
+
+For every run report on val: macro_f1 (main), recall_high, precision_high, F1 per class, accuracy, confusion
+matrix (PNG + CSV), macro_f1 for curb_ramp_issue boxes and for surface_damage boxes, and the majority baseline
+(macro_f1 0.465, accuracy 0.869) next to them. Append one row per run to experiments/experiments.csv.
+Save each run in experiments/<run_id>/.
+
+Then write severity/predict.py with load_severity_model(path) and predict_severity(model, crops) returning
+(label, p_high) per crop using the stored threshold, and severity/SELECTED_MODEL.md (run_id, checkpoint, threshold,
+val metrics, mean ± std over seeds). Show me the comparison table before committing, then commit with
+"v2 severity: runs A-D, selected <run_id>".
 
 Never use the test split.
 ```
 
 ---
 
-## Prompt 3: friend, detection model
+## Prompt 3 — Hala, detection model (v2)
 
 ```
-Read AGENTS.md first and follow it exactly. I own detection/ and must not change shared code without asking.
+Read AGENTS.md and detection/AGENTS.md first and follow them exactly. I own detection/ and must not change shared
+code without asking. This is version 2 (1,010 boxes).
 
-Build the detection model:
-1. Use datasets/yolo/data.yaml made by scripts/make_yolo_labels.py (train and val only; no_defect images are background with empty label files).
-2. Train YOLOv8 from pretrained yolov8n.pt, imgsz 640, seed 42, early stopping on val, built-in augmentation only.
-3. Report on val, per class and overall: mAP50 (main), mAP50-95, precision, recall. Append the run to experiments/experiments.csv.
-4. Second run: same settings with yolov8s.pt. Third run (optional): the better model with imgsz 1024. One change per run.
+Write detection/train.py and run, one change per run, on datasets/yolo/data.yaml (train and val only; no_defect
+images are background images with empty label files):
+1. Run A: YOLOv8n from yolov8n.pt, imgsz 640, seed 42, epochs 100, patience 20, built-in augmentation only.
+2. Run B: same with yolov8s.pt.
+3. Run C: the better of A/B with imgsz 1024 (small defects).
+4. For each run report on val, overall and per class (curb_ramp_issue, surface_damage): mAP50 (main), mAP50-95,
+   precision, recall. Append one row per run to experiments/experiments.csv and save the plots and the
+   confusion matrix in experiments/<run_id>/.
+5. For the best run, choose the confidence threshold on val that maximises F1 over both classes (also report the
+   per-class F1 at that threshold), and look at 10 val images with missed curb_ramp_issue boxes; describe the
+   pattern in 3-4 sentences.
+6. Repeat the best run with seeds 43 and 44 and report mean ± std of val mAP50.
+
+Write detection/SELECTED_MODEL.md (run_id, weights path or Drive link, confidence threshold, val metrics) and
+detection/predict.py with load_detector(path) and detect(model, image) returning a list of
+(defect_class, confidence, x_center, y_center, width, height) in normalised coordinates, using the stored
+threshold. Show me the comparison table before committing, then commit with "v2 detection: runs A-C, selected <run_id>".
 
 Never use the test split.
 ```
 
 ---
 
-## Prompt 4: final evaluation, Release 1 (once, at the end of Sprint 2)
-
-Run it only when both models are final and nothing will change.
+## Prompt 4 — final evaluation, Release 1 (once, when both models are final)
 
 ```
-Read AGENTS.md first and follow it exactly.
+Read AGENTS.md first and follow it exactly. Both selected models are final; nothing will be retrained after this.
 
-Write scripts/final_eval.py and run it once on the chosen models:
-1. Detection metrics on test: mAP50, mAP50-95, precision, recall, per class and overall.
-2. Severity on test using the human boxes: macro_f1, accuracy, F1 per class, confusion matrix, with the majority baseline next to it.
-Do not build the full pipeline yet; that is Release 2.
-Save every table and confusion matrix in reports/final/.
+Write scripts/final_eval.py --release 1 and run it once:
+1. Detection on test (images of split == test, including no_defect images as background): mAP50, mAP50-95,
+   precision, recall, overall and per class, with the selected confidence threshold for precision/recall.
+2. Severity on test using the human boxes (crop_box on the test boxes): macro_f1, recall_high, precision_high,
+   F1 per class, accuracy, confusion matrix, macro_f1 per defect class, and the majority baseline (train majority
+   class) next to it. Use the stored threshold.
+3. Put val and test results side by side in reports/final/release1_summary.md, plus the confusion matrices
+   (PNG + CSV), and 6 example test images with predictions drawn (3 correct, 3 wrong).
+Do not change any model, threshold or label after seeing these numbers. Commit with "v2 Release 1 final evaluation".
 ```
 
 ---
 
-## Prompt 5: full pipeline, Release 2 (Sprint 3, not now)
+## Prompt 5 — pipeline: detection → crop → severity (Release 2)
 
 ```
-Read AGENTS.md first and follow it exactly.
+Read AGENTS.md and pipeline/AGENTS.md first and follow them exactly.
 
-Add the full pipeline to scripts/final_eval.py: detection -> khota_ml.crop.crop_box -> severity.
-Report severity macro_f1 on the detected boxes that match a human box (IoU >= 0.5), next to the Release 1 results.
-Save the results in reports/final/pipeline/.
+Write pipeline/analyze.py with:
+  load_models() -> reads detection/SELECTED_MODEL.md and severity/SELECTED_MODEL.md, loads both once.
+  analyze_image(image: PIL.Image, models) -> dict:
+     {status: "completed" | "no_issue_detected" | "not_assessable",
+      issues: [{issue_class, severity, detection_confidence, p_high, box: {x, y, w, h}}] sorted high first, then
+              by detection confidence,
+      timings_ms: {quality, detection, severity, total}}
+Steps: image-quality check (below) -> detection with the stored threshold -> khota_ml.crop.crop_box(expand=0.20)
+on each detected box at full resolution -> severity with the stored threshold.
+
+Image-quality check (AGENTS.md / docs/APP_INTEGRATION.md section 4): brightness (mean grey value), blur (variance of
+the Laplacian) and minimum size. Choose the thresholds on VAL images only so that at most 2% of val images fail;
+save them in pipeline/quality.yaml with the val numbers. Never use test for this.
+
+Add pipeline/cli.py: python -m pipeline.cli <image> prints the JSON result. Add tests in pipeline/tests/ with 3 val
+images (one no_defect). Run it on 20 val images and print the timings (median and max). Commit with
+"v2 pipeline: analyze_image".
+```
+
+---
+
+## Prompt 6 — pipeline evaluation (once, Release 2)
+
+```
+Read AGENTS.md first and follow it exactly. The pipeline and the models are final.
+
+Add --release 2 to scripts/final_eval.py and run it once on the test split:
+1. Run pipeline.analyze_image on every test image.
+2. Match detected boxes to human boxes of the same image with IoU >= 0.5 (greedy, highest confidence first).
+   Report: detection precision/recall at the pipeline threshold (per class), and severity macro_f1, recall_high and
+   confusion matrix on the matched boxes (the severity of a matched detected box vs the human severity).
+3. Image level (what the citizen sees): for each test image compare the pipeline's report-level result (severity =
+   high if any issue is high, else low_medium; or no issue) with the human labels: a 3x3 table
+   (no issue / low_medium / high) and its accuracy and macro_f1.
+4. How many test images were marked not_assessable by the quality check (should be close to 0).
+5. Median and 95th-percentile analysis time per image.
+Save everything in reports/final/pipeline/ with a summary next to the Release 1 results. Commit with
+"v2 Release 2 pipeline evaluation".
+```
+
+---
+
+## Prompt 7 — analysis worker (connects the models to Firebase)
+
+```
+Read AGENTS.md, service/AGENTS.md and docs/APP_INTEGRATION.md first and follow them exactly.
+
+Write service/worker.py (Python, firebase-admin):
+1. Credentials only from GOOGLE_APPLICATION_CREDENTIALS. Add service/*.json and .env to .gitignore before anything else.
+2. Load the models once with pipeline.analyze.load_models().
+3. Listen (on_snapshot) to Firestore collection "reports" where analysisStatus == "processing". For each report:
+   claim it in a transaction (processing -> analyzing, analysisClaimedAt), download imageUrl into memory (no file
+   kept), run pipeline.analyze_image, and write exactly the fields in docs/APP_INTEGRATION.md section 2
+   (analysisStatus, issues, issueClass, severity, analysisReason, modelVersion, analyzedAt, updatedAt).
+   On error retry 3 times, then write analysisStatus "failed" with an Arabic analysisReason.
+   On start, also pick up reports stuck in "analyzing" for more than 10 minutes.
+4. Arabic analysisReason texts:
+   not_assessable: "تعذّر تقييم الصورة. الرجاء التقاط صورة أوضح تُظهر الرصيف كاملًا."
+   no_issue_detected: "لم يتم العثور على ضرر في الرصيف أو منحدره في هذه الصورة."
+   failed: "حدث خطأ أثناء تحليل الصورة. سيُعاد التحليل لاحقًا."
+5. A tiny HTTP server in the same process with GET /health -> {"status": "ok", "modelVersion": ...} for uptime
+   monitoring.
+6. service/Dockerfile and service/README.md: how to run locally (python -m service.worker) and how to deploy on
+   Cloud Run with min-instances 1 (or another always-on host), with the key passed as a secret, never baked in.
+7. service/tests/: unit tests with a fake Firestore (no network) for: claim, completed, no_issue_detected,
+   not_assessable, failed after 3 errors, and "never writes reportStatus".
+Run the tests. Then, only with my confirmation, run it against ONE test report created with a test account and
+show me the document before and after. Commit with "v2 service: analysis worker".
+```
+
+---
+
+## Prompt 8 — app integration (run this in the app repository `hcchly/Khota`)
+
+```
+Read the project's code style and existing structure first (lib/services/report_service.dart,
+lib/widgets/report_status_widgets.dart, lib/screens/reports/). Do not change login, registration, the
+report submission flow or the iOS project files (ios/, Info.plist, swiftpm). Never commit API keys or tokens.
+
+The analysis worker (repo Khota-ML, docs/APP_INTEGRATION.md) now writes these fields to reports/{id}:
+analysisStatus ("processing" | "analyzing" | "completed" | "no_issue_detected" | "not_assessable" | "failed"),
+issues (list of {issueClass, severity, detectionConfidence, pHigh, box{x,y,w,h}}), issueClass, severity,
+analysisReason (Arabic), modelVersion, analyzedAt.
+
+1. Add an AnalysisResult model that parses these fields safely (missing or null fields = still processing).
+2. In the citizen's report list and report details, listen to the document (snapshots) and show:
+   - processing / analyzing: "جارٍ تحليل الصورة" with a progress indicator,
+   - completed: issue type and severity in Arabic
+     (curb_ramp_issue = "مشكلة في منحدر الرصيف", surface_damage = "تلف في سطح الرصيف",
+      low_medium = "منخفضة إلى متوسطة", high = "عالية"), the number of issues, and the photo with the boxes drawn
+     (box is normalised x_center, y_center, width, height),
+   - no_issue_detected / not_assessable / failed: analysisReason, and for not_assessable a button to submit a new
+     photo.
+   Severity must not rely on colour alone (text + icon), and all new widgets need Arabic Semantics labels and must
+   work at 200% text size (Accessibility NFR).
+3. firestore.rules: keep citizens unable to write any analysis field (create rule unchanged; no client update).
+   Add rules tests if the project has them.
+4. Widget tests with fake data for each status (follow test/helpers/report_fakes.dart).
+5. Run flutter analyze and flutter test. Show me screenshots of each state (golden or emulator), then commit on a
+   new branch "feature/analysis-results" and open a PR. Do not merge.
+```
+
+---
+
+## Prompt 9 — end-to-end system test and timing
+
+```
+Read AGENTS.md and docs/APP_INTEGRATION.md first.
+
+Write scripts/e2e_test.py that uses a TEST Firebase account (credentials from the environment, never committed):
+1. Upload 20 val images (not test) as reports exactly like the app does (Storage upload + reports document with
+   analysisStatus "processing"), tagged with description "E2E TEST".
+2. Wait for the worker and record for each report: time from createdAt to analyzedAt, the status, and whether the
+   result equals pipeline.analyze_image run locally on the same image.
+3. Print: success rate, median and 95th-percentile analysis time, and any mismatch. Save reports/e2e/e2e_results.csv
+   and a short summary for the report.
+4. Delete the 20 test reports and their images at the end (ask me first).
+Also check GET /health of the deployed worker every minute for 30 minutes and report the uptime (Availability NFR).
+Commit the script and the summary (not the images) with "v2 end-to-end test".
 ```

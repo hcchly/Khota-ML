@@ -1,182 +1,195 @@
-# Khota ML — shared rules (read before any change)
+# Khota ML — shared rules, version 2 (read before any change)
 
-Khota is a KSU graduation project that detects sidewalk problems in street photos and rates their severity.
-Two people work on two models in this repository. These rules keep their work compatible. **Do not break any rule
-below. If a task seems to need breaking one, stop and ask.**
+Khota is a KSU graduation project. Citizens photograph sidewalk problems in Riyadh; this repository holds the two
+models that find the problems and rate their severity, and the code that connects them to the Khota app.
+**Do not break any rule below. If a task seems to need breaking one, stop and ask.**
 
-## 1. The two models
+> **Version 2** (10 Nov 2026) replaces version 1. Severity is now **binary** (`low_medium` / `high`), the labels
+> come from `Khota_Model_Final_Binary.xlsx`, and the dataset has 1,010 boxes. Version 1 (low / medium / high,
+> 581 boxes) is kept at git tag `v1` and in `experiments/v1/` for the report only. Never mix v1 and v2 results,
+> splits or checkpoints.
 
-| Model | Owner | Input | Output |
-|---|---|---|---|
-| Model 1 — Detection (YOLOv8) | Friend | full photo | boxes with a type: `curb_ramp_issue` or `surface_damage` |
-| Model 2 — Severity (classifier) | Haifa | one cropped box | `low` / `medium` / `high` |
+## 1. The two models and the pipeline
 
-At the end they run as one pipeline: photo → detection → crop (rule 5) → severity.
+| Model | Owner | Folder | Input | Output |
+|---|---|---|---|---|
+| Model 1 — Detection (YOLOv8) | Hala | `detection/` | full photo | boxes with a type: `curb_ramp_issue` or `surface_damage` |
+| Model 2 — Severity (classifier) | Haifa | `severity/` | one cropped box | `low_medium` or `high` |
+
+Pipeline: photo → detection → `crop_box` (rule 5) → severity → result written to the report in Firebase (rule 11).
 Both models use **the same boxes**: the boxes the team drew in Roboflow. There is one annotation, not two.
 
 ## 2. Class IDs (never change, never reorder)
 
-Detection classes (same as `Class_ID` in the Excel and in the Roboflow export):
+Detection classes (same as `Class_ID` in the Excel and the order in every Roboflow `data.yaml`):
 - `0` = `curb_ramp_issue`
 - `1` = `surface_damage`
 
-Severity classes:
-- `0` = `low`
-- `1` = `medium`
-- `2` = `high`
+Severity classes (binary rubric, `Khota_Severity_Rubric_Binary`):
+- `0` = `low_medium` (old Low + Medium: visible damage, the walking path or curb transition stays continuous)
+- `1` = `high` (the damage interrupts or blocks the walking path or the curb transition)
 
 Also used in the data, never as a training class:
 - `no_defect` — a photo with no target defect. It stays in **detection** data as a background image with an empty
   label file and is **excluded** from severity data.
 
-Not Assessable and duplicate photos are **not** in the data at all: they are listed in the Excel sheet
-`Excluded_Images` and are removed from both models. There is no `not_assessable` severity.
+Not Assessable and duplicate photos are **not** in the data at all: they are in the Excel sheet `Excluded_Images`
+and are removed from both models. There is no `not_assessable` severity class.
 
-All class names live only in `khota_ml/config.py`. Every script imports them from there.
+All class names live only in `khota_ml/config.py`. Every script imports them from there. Refer to the high class
+by name (`config.HIGH`), never by index.
 
-## 3. Data sources and the single label file
+## 3. Data
 
 ### 3.1 Sources (do not edit by hand)
 
-- `data/source/Khota_Model_Final.xlsx` — the team's final label table:
-  - `Batch_1`, `Batch_2`, `Batch_3`: one row per box —
-    `Image_ID, Box_Index, Class_ID, Class_Name, x_center, y_center, width, height, Severity, Reason_Codes`.
-    `Box_Index` is the 0-based line order inside the Roboflow YOLO label file, so every box has its own severity.
+- `data/source/Khota_Model_Final_Binary.xlsx` — the team's final, confirmed label table:
+  - `Boxes`: **one row per box** — `Batch, Image_ID, Box_Index, Class_ID, Class_Name, x_center, y_center, width,
+    height, Area_%, Size_Check, Severity`. `Box_Index` `B01` = line 1 of the Roboflow label file, `B02` = line 2 …
+    (in `annotations.csv` this becomes `box_id` 0, 1, … ).
+  - `Batch_1`, `Batch_2`, `Batch_3`: one row per image + class + severity, with its boxes (`B01, B03`) and
+    `Reason_Codes`.
   - `Image_Index`: every image the models use, with its Roboflow image filename, label filename and `Box_Count`.
-  - `Empty_Images`: the `no_defect` images (0 boxes).
-  - `Excluded_Images`: Not Assessable and Duplicate images. Never use them.
-- `raw/` — the three Roboflow **YOLOv8** exports (Batch 1 v3, Batch 2 v3, Batch 3 v2), downloaded from the shared
-  Google Drive folder `all_batches_boxes`. Not committed (too large). Scripts find files **by filename**
-  anywhere under `raw/`, so the folder layout inside `raw/` does not matter.
-- `data/source/gps_batch1_2.csv` — GPS of batch 1 and batch 2 photos, from the batch Excel files.
+  - `Empty_Images`: the `no_defect` images (0 boxes). `Excluded_Images`: never use them.
+- `raw/` — the latest Roboflow **YOLOv8** exports of the three batches (taken **after 10 Nov 2026**, no resize, no
+  augmentation). Not committed. Scripts find files **by filename** anywhere under `raw/`.
+- `data/source/gps.csv` — GPS of every photo from the batch Excel files (batch 3 is included in v2).
 
-### 3.2 `data/annotations.csv` — the only label file both models read
+### 3.2 `data/annotations.csv` — the only label file the models read
 
-Built by `scripts/convert_annotations.py` (already written; do not rewrite it). One row per box:
+Built by `scripts/convert_annotations.py` (already written and checked; do not rewrite it). One row per box:
 
-`image_id, batch, image_file, box_id, location_id, defect_class, severity, x_center, y_center, width, height, reason_codes`
+`image_id, batch, image_file, box_id, box_label, location_id, defect_class, severity, x_center, y_center, width,
+height, reason_codes`
 
-- `image_file` is the Roboflow image filename under `raw/` (e.g. `RYD-0001_jpg.rf.c868….jpg`).
-- `box_id` = `Box_Index`. Box coordinates are YOLO-normalised (0–1).
-- `severity` is one of `low`, `medium`, `high`.
-- A `no_defect` image has one row with `defect_class = no_defect` and empty box, box_id and severity.
-- `reason_codes` is kept for the report only. No model trains on it.
+- `image_file` is the Roboflow image filename under `raw/`. Coordinates are YOLO-normalised (0–1).
+- `severity` is `low_medium` or `high`. A `no_defect` image has one row with empty box, box_id and severity.
+- `reason_codes` is for the report only. No model trains on it.
 
-Run `python scripts/convert_annotations.py --raw raw/` once after downloading the exports. It checks every box in
-the Excel against the Roboflow label files (file exists, line count, class, coordinates) and stops on any mismatch.
-
-YOLO `.txt` label files for training are **generated** from `annotations.csv` by `scripts/make_yolo_labels.py`.
-Never edit them by hand.
+`python scripts/convert_annotations.py --raw raw/` checks the Excel against the Roboflow label files (file exists,
+line count, class, coordinates) and stops on any mismatch. YOLO `.txt` files for training are **generated** from
+`annotations.csv` by `scripts/make_yolo_labels.py`. Never edit them by hand.
 
 ### 3.3 Label changes
 
 Labels are fixed. A change is made in Roboflow **and** the Excel, then `annotations.csv` is rebuilt, and the change
-is recorded in `data/CHANGELOG.md` (date, image_id, box_id, old → new, reason). If boxes or their order change in a
-label file, `Box_Index` in the Excel must be regenerated. No label change is ever made after test results have been
-seen.
+is recorded in `data/CHANGELOG.md`. If boxes or their order change in a label file, `Box_Index` must be regenerated.
+No label change is ever made after test results have been seen.
 
-### 3.4 Dataset at the time of writing (check against the script output)
+### 3.4 Dataset v2 (from `convert_annotations.py`)
 
-| | low | medium | high | total |
-|---|---|---|---|---|
-| curb_ramp_issue | 85 | 45 | 28 | 158 |
-| surface_damage | 143 | 192 | 88 | 423 |
-| total | 228 | 237 | 116 | **581 boxes** |
+| | low_medium | high | total |
+|---|---|---|---|
+| curb_ramp_issue | 134 | 26 | 160 |
+| surface_damage | 738 | 112 | 850 |
+| total | 872 (86%) | 138 (14%) | **1,010 boxes** |
 
-694 images (427 with boxes, 267 `no_defect`), 37 excluded. Batch 1: 389 images / 291 boxes, batch 2: 255 / 232,
-batch 3: 50 / 58. Images have 1–4 boxes.
+689 images (495 with boxes, 194 `no_defect`), 42 excluded (24 Not Assessable, 18 duplicate).
+Batch 1: 388 images / 566 boxes, batch 2: 251 / 379, batch 3: 50 / 65. Images have 1–11 boxes.
 
-## 4. One split for both models
+**The data is imbalanced on purpose** (it reflects real sidewalks): `high` is 14% of boxes and `curb_ramp_issue`
+16%. `curb_ramp_issue` + `high` has only 26 boxes (3 in val, 4 in test): report it, but never draw conclusions
+from it alone.
 
-- `data/locations.csv` (`image_id, batch, latitude, longitude, gps_source, location_id`) is built by
-  `scripts/make_locations.py` (already written). Photos within 50 m of each other (chained) share a `location_id`.
-  Photos without GPS are grouped by runs of consecutive Image_IDs (`nogps_xx`).
-- **Batch 3 has no GPS yet** (`RYD-0683 … RYD-0733`, 50 images, 43 of the 116 `high` boxes). Until GPS is added
-  it is one big group and lands entirely in one split. If the original batch 3 photos are available, run
-  `python scripts/make_locations.py --originals <folder of the original batch 3 photos>` before making the split
-  to read their EXIF GPS. If not, the balance check below still finds a valid split; note in the report that
-  batch 3 was kept together.
-- `data/split.csv`: `image_id, location_id, split` with split in `train`, `val`, `test`.
-- Created once by `scripts/make_split.py`, then committed and never regenerated.
-- Grouped by `location_id`: all photos of one location are in one split.
-- Target 70 / 15 / 15 by image count, starting at `seed = 42`.
-- Accept a seed only if **val and test each** contain at least 10 `high` boxes and at least 15 `curb_ramp_issue`
-  boxes, **and** in each split the share of every severity class and of every defect class is within
-  10 percentage points of its share in the whole dataset. Otherwise try the next seed (43, 44, … up to 1041).
-  Print the accepted seed; stop if none passes.
-- The script prints and saves `reports/split_stats.csv`: box counts per split × defect class × severity, and
-  image counts per split (with and without boxes).
+## 4. One split for both models (already made — do not regenerate)
+
+- `data/locations.csv`: photos within 50 m of each other (chained) share a `location_id`. 272 locations. Only
+  RYD-0610 … 0621 have no GPS; they are kept together as `nogps_00`.
+- `data/split.csv` (`image_id, location_id, split`) was made by `scripts/make_split.py` with **seed 42**, grouped
+  by location, ~70/15/15. Rule: val and test each have ≥ 10 `high` boxes and ≥ 15 `curb_ramp_issue` boxes, and
+  every class share within 10 percentage points of the whole dataset. Never regenerate it.
+
+| split | images | with boxes | boxes | high | curb_ramp_issue |
+|---|---|---|---|---|---|
+| train | 491 | 353 | 695 | 95 | 118 |
+| val | 99 | 71 | 160 | 21 | 21 |
+| test | 99 | 71 | 155 | 22 | 21 |
 
 ## 5. Crop rule (shared by training and the pipeline)
 
-- Implemented once in `khota_ml/crop.py` as `crop_box(image, box, expand=0.20)`.
-- Expand the box by 20% of its width on the left and right, and 20% of its height on the top and bottom.
-  Clip to the image edges. Keep the aspect ratio. No padding.
-- The severity model is trained on crops of the **human** boxes made with this function. The pipeline crops the
-  **detected** boxes with the same function. Never write a second crop function.
+- `khota_ml/crop.py` → `crop_box(image, box, expand=0.20)`: expand the box by 20% of its width on the left and
+  right and 20% of its height on the top and bottom, clip to the image, no padding.
+- The severity model is trained on crops of the **human** boxes. The pipeline crops the **detected** boxes with the
+  same function. Never write a second crop function.
 - Crops are cut from the image at its **full stored resolution**, before any resize.
 
 ## 6. The test split is locked
 
 - No training, tuning, threshold choice, model choice or early stopping uses `test`.
 - All comparisons use `val`.
-- Only `scripts/final_eval.py` reads `test`, run once at the end on the chosen models.
+- Only `scripts/final_eval.py` reads `test`, run **once** per release on the chosen models. Its results are final,
+  even if they are worse than val.
 
 ## 7. Metrics (same names everywhere)
 
-**Main metric — the one used to compare runs and choose models:**
-- Detection: `mAP50` on val.
+Main metric — the one used to compare runs and choose models:
+- Detection: `mAP50` on val (also report per-class `mAP50`; `curb_ramp_issue` is the small class).
 - Severity: `macro_f1` on val.
 
 Also reported:
 - Detection, per class and overall: `mAP50-95`, `precision`, `recall`.
-- Severity: `accuracy`, F1 per class, confusion matrix (saved as PNG and CSV).
+- Severity: `recall_high`, `precision_high`, F1 per class, `accuracy`, confusion matrix (PNG + CSV), and
+  `macro_f1` separately for `curb_ramp_issue` and `surface_damage` boxes.
 
-Accuracy is never the main severity metric: the classes are imbalanced (`high` is 20% of boxes).
+**Accuracy is never the main severity metric.** Predicting `low_medium` for every box already gives val accuracy
+0.869 but macro_f1 0.465 and recall_high 0 (the majority baseline, `experiments/severity_majority_baseline`).
+Report the baseline next to every severity result.
 
-Severity baseline: the majority class of **train** predicted for every val (and, at the end, test) crop. Report its
-`accuracy` and `macro_f1` next to every severity result. On the whole dataset this is `medium`:
-accuracy 0.408, macro_f1 0.193 (the split's train set may give slightly different numbers).
-
-Pipeline (final only): severity `macro_f1` on the boxes detection found, plus the detection metrics.
+Pipeline (Release 2): see prompt 6.
 
 ## 8. Training rules
 
-- `seed = 42` for Python, NumPy and PyTorch.
+- `seed = 42` for Python, NumPy and PyTorch. To show stability, repeat the selected run with seeds 43 and 44 and
+  report mean ± std.
 - Images are the Roboflow JPGs in `raw/`, found by `image_file`.
-- Detection: start from pretrained `yolov8n.pt` or `yolov8s.pt`, `imgsz = 640`, early stopping on val.
-  Use YOLO's built-in augmentation; add no other. `no_defect` images go in as background images with empty labels.
-  `curb_ramp_issue` has far fewer boxes than `surface_damage` (158 vs 423): always report per-class mAP50.
-  `imgsz = 1024` may be tried as one separate run (small `low` defects).
-- Severity: pretrained backbone, class weights from train counts (inverse frequency).
-- Severity augmentation on **train only**, and only: horizontal flip, rotation within ±10°,
-  brightness/contrast within ±20%. Never strong zoom or crop, blur, or strong colour changes, because they change
-  how severe a defect looks.
-- Run the first severity experiment without augmentation and one with it, to show the difference.
-- Severity input: compare the 20% expanded crop with the full image as one experiment (rubric "image context rule");
-  keep the input that scores better on val.
+- Detection: pretrained `yolov8n.pt` / `yolov8s.pt`, `imgsz = 640` first, early stopping on val, YOLO's built-in
+  augmentation only. `no_defect` images are background images with empty labels. `imgsz = 1024` may be one
+  separate run (small defects).
+- Severity: pretrained backbone; handle the imbalance with **one** method per run — class weights (inverse train
+  frequency) **or** a weighted sampler — never both. A decision threshold for `high` may be chosen on **val**
+  (store it with the checkpoint); default 0.5.
+- Severity augmentation on **train only**, and only: horizontal flip, rotation within ±10°, brightness/contrast
+  within ±20%. Never strong zoom or crop, blur, or strong colour changes (they change how severe a defect looks).
+- Never oversample or augment val or test.
 
 ## 9. Experiment log
 
-Every run appends one row to `experiments/experiments.csv`:
+Every run appends one row to `experiments/experiments.csv` (v2 only):
 `run_id, date, owner, model, change_from_previous, key_settings, val_main_metric, val_other_metrics, notes`.
-`val_main_metric` is `mAP50` for detection and `macro_f1` for severity. Change one thing per run.
-Outputs go in `experiments/<run_id>/`.
+Change one thing per run. Outputs go in `experiments/<run_id>/`. The chosen model of each owner is written in
+`<folder>/SELECTED_MODEL.md` (run_id, checkpoint path, threshold, val metrics). Checkpoints are not committed
+except the selected one (`git add -f`), or are uploaded to the shared Drive with the link in `SELECTED_MODEL.md`.
 
 ## 10. Repository layout
 
 ```
-data/            annotations.csv, locations.csv, split.csv, CHANGELOG.md
-data/source/     Khota_Model_Final.xlsx, gps_batch1_2.csv (inputs; do not edit)
+AGENTS.md / CLAUDE.md   these rules (CLAUDE.md just imports AGENTS.md)
+data/            annotations.csv, locations.csv, split.csv, CHANGELOG.md (v1_split.csv is history)
+data/source/     Khota_Model_Final_Binary.xlsx, gps.csv (inputs; do not edit)
 raw/             Roboflow YOLOv8 exports (not committed)
 khota_ml/        config.py, crop.py, metrics.py, data.py (shared code)
-scripts/         convert_annotations.py, make_locations.py, make_yolo_labels.py, make_split.py,
-                 baseline.py, final_eval.py
-detection/       YOLO training code
-severity/        classifier training code
-experiments/     experiments.csv, one folder per run
-reports/         tables and figures for the report
+scripts/         convert_annotations.py, make_locations.py, make_split.py, make_yolo_labels.py, baseline.py,
+                 final_eval.py
+detection/       YOLO training (Hala)
+severity/        classifier training (Haifa); train_v1.py is the v1 script, for reference
+pipeline/        detection → crop → severity, used by evaluation and the service
+service/         the analysis worker that connects the pipeline to the app's Firebase
+experiments/     experiments.csv (v2), one folder per run; experiments/v1/ is history
+reports/         tables and figures for the report (reports/final/ = test results)
+docs/            PROMPTS.md (the prompts, in order), APP_INTEGRATION.md (the Firebase contract)
 ```
 
-Shared code in `khota_ml/` and `scripts/` changes only when both owners agree. Each owner edits only their own
-folder (`detection/` or `severity/`).
+Shared code (`khota_ml/`, `scripts/`, `pipeline/`, `service/`) changes only when both owners agree. Each owner
+edits only their own model folder.
+
+## 11. Connection to the app (summary — full contract in `docs/APP_INTEGRATION.md`)
+
+- The app (repo `hcchly/Khota`, Flutter + Firebase project `khota-988e6`) saves a report in Firestore
+  `reports/{id}` with `analysisStatus = "processing"`, `issueClass = null`, `severity = null` and an `imageUrl`.
+- The **analysis worker** (`service/`) finds reports with `analysisStatus == "processing"`, runs the pipeline on
+  the image and writes the result with the Firebase Admin SDK. The app never runs the models.
+- The worker writes only the fields listed in `docs/APP_INTEGRATION.md`. It never changes `reportStatus`, the
+  user's fields or the image. Service-account keys are **never committed** (`.gitignore`), and nobody logs or
+  copies report images outside Firebase.
+- PIQS is not computed here yet; the worker stores what PIQS will need (issue class, severity, confidence per
+  issue).

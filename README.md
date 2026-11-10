@@ -1,10 +1,21 @@
-# Khota ML
+# Khota ML — version 2
 
-Sidewalk defect detection (YOLOv8) and severity rating (Low / Medium / High) for the Khota graduation project.
+Sidewalk defect detection (YOLOv8) and **binary** severity rating (`low_medium` / `high`) for the Khota graduation
+project, and the worker that connects them to the Khota app.
 
-- Shared rules for people and Codex: [AGENTS.md](AGENTS.md)
-- Prompts to give Codex, in order: [docs/PROMPTS.md](docs/PROMPTS.md)
-- Labels: `data/source/Khota_Model_Final.xlsx` → `data/annotations.csv` (`scripts/convert_annotations.py`)
-- Locations for the grouped split: `data/locations.csv` (`scripts/make_locations.py`)
-- Images: the Roboflow YOLOv8 exports in the shared Google Drive folder `all_batches_boxes`.
-  Download them into `raw/` (not committed). Model weights are not committed either.
+- Rules for people and AI agents: [AGENTS.md](AGENTS.md) (Claude Code reads it through [CLAUDE.md](CLAUDE.md))
+- Prompts, in order: [docs/PROMPTS.md](docs/PROMPTS.md)
+- Firebase contract with the app: [docs/APP_INTEGRATION.md](docs/APP_INTEGRATION.md)
+- Labels: `data/source/Khota_Model_Final_Binary.xlsx` → `data/annotations.csv` (`scripts/convert_annotations.py`)
+- Split (seed 42, by location): `data/split.csv` — never regenerate
+- Images: the latest Roboflow YOLOv8 exports, downloaded into `raw/` (not committed)
+
+| | low_medium | high | total |
+|---|---|---|---|
+| curb_ramp_issue | 134 | 26 | 160 |
+| surface_damage | 738 | 112 | 850 |
+| total | 872 | 138 | 1,010 boxes |
+
+689 images (495 with boxes, 194 no_defect), 42 excluded.
+
+**Version 1** (low / medium / high, 581 boxes) is at git tag `v1`; its experiments are in `experiments/v1/`.

@@ -1,7 +1,7 @@
 """Build data/locations.csv: one row per image with a location_id for the grouped split (AGENTS.md section 4).
 
 GPS comes from:
-  1. data/source/gps_batch1_2.csv  (Images sheets of the batch 1 and batch 2 Excel files), and
+  1. data/source/gps.csv  (Images sheets of the batch 1, 2 and 3 Excel files; v2 adds batch 3), and
   2. optionally, EXIF GPS read from original photos:  --originals <folder>  (HEIC or JPG named by Image_ID,
      e.g. RYD-0701.HEIC). Use this for batch 3 and for any image that has no GPS yet.
 
@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from khota_ml.config import LOCATION_RADIUS_M  # noqa: E402
 
-EXCEL = ROOT / "data/source/Khota_Model_Final.xlsx"
-GPS_CSV = ROOT / "data/source/gps_batch1_2.csv"
+EXCEL = ROOT / "data/source/Khota_Model_Final_Binary.xlsx"
+GPS_CSV = ROOT / "data/source/gps.csv"
 OUT = ROOT / "data/locations.csv"
 
 

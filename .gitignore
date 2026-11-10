@@ -20,3 +20,8 @@ __pycache__/
 *.pt
 *.pth
 *.ckpt
+
+# Credentials (never commit)
+service/*.json
+*.env
+.env
